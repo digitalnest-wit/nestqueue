@@ -9,11 +9,9 @@ import { tickets } from "./mock/tickets";
 import Ticket from "./types/ticket";
 
 export default function Home() {
-  const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
   const router = useRouter();
 
   function handleTicketClick(ticket: Ticket) {
-    setActiveTicket(ticket);
     router.push(`/tickets/${ticket.id}`);
   }
 
