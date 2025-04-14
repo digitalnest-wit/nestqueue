@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 
-import NotFound from "../../components/NotFound";
-import { tickets } from "../../mock/tickets";
 import Header from "@/app/components/Header";
+import NotFound from "@/app/components/NotFound";
+import { tickets } from "@/app/mock/tickets";
 
 export default function TicketDetail() {
   const params = useParams();
