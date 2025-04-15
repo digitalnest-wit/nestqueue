@@ -2,10 +2,9 @@
 
 import Ticket from "../types/ticket";
 import StatusChip, { StatusDot } from "./Status";
-import PriorityIcon from "./PriorityIcon";
+import PriorityIconLabel from "./PriorityIcon";
 import useWindowSize from "../hooks/useWindowSize";
 import { isMobile } from "../types/window";
-import { JSX } from "react";
 
 export default function TicketsTable({
   tickets,
@@ -64,7 +63,7 @@ function TableRow({
     >
       <td className="px-4 py-2">{ticket.id}</td>
       <td className="px-4 py-2 hidden sm:block">
-        <PriorityIcon priority={ticket.priority} />
+        <PriorityIconLabel priority={ticket.priority} />
       </td>
       <td className="px-4 py-2 max-w-2xs truncate whitespace-nowrap overflow-hidden">
         {ticket.description}
