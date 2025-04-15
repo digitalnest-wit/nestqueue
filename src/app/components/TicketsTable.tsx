@@ -1,7 +1,7 @@
 "use client";
 
 import Ticket from "../types/ticket";
-import StatusChip from "./StatusChip";
+import StatusChip from "./Status";
 import PriorityIcon from "./PriorityIcon";
 
 export default function TicketsTable({

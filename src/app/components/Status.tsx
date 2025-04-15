@@ -14,22 +14,29 @@ export default function StatusChip({ status }: { status: Status }) {
   }
 
   // Set the background color of the chip depending on the status
-  let color: string;
+  const color = colorForStatus(status);
+
+  return (
+    <span className={`${color} text-white text-xs rounded-lg p-1`}>
+      {label}
+    </span>
+  );
+}
+
+export function StatusDot({ status }: { status: Status }) {
+  const color = colorForStatus(status);
+  return <div className={`${color} w-1 h-1 rounded-lg p-1`}></div>;
+}
+
+function colorForStatus(status: Status) {
   switch (status) {
     case "open":
-      color = "bg-green-500";
-      break;
+      return "bg-green-500";
     case "inProgress":
-      color = "bg-yellow-500";
-      break;
+      return "bg-yellow-500";
     case "resolved":
-      color = "bg-gray-400";
-      break;
+      return "bg-gray-400";
     case "rejected":
-      color = "bg-red-500";
-      break;
+      return "bg-red-500";
   }
-
-  const classes = `${color} text-white text-xs rounded-lg p-1`;
-  return <span className={classes}>{label}</span>;
 }
