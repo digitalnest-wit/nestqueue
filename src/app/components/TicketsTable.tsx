@@ -15,23 +15,23 @@ export default function TicketsTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200 rounded-lg shadow">
+      <table className="table-auto min-w-full divide-y divide-gray-200 rounded-lg shadow">
         <thead className="bg-gray-100">
           <tr>
             <th className="px-4 py-2 text-left text-sm text-gray-700">ID</th>
-            <th className="px-4 py-2 text-left text-sm text-gray-700 hidden sm:block">
+            <th className="px-2 py-2 text-left text-sm text-gray-700 hidden sm:inline-block">
               Priority
             </th>
-            <th className="px-4 py-2 text-left text-sm text-gray-700">
+            <th className="px-2 py-2 text-left text-sm text-gray-700">
               Description
             </th>
-            <th className="px-4 py-2 text-left text-sm text-gray-700 hidden md:block">
+            <th className="px-2 py-2 text-left text-sm text-gray-700 hidden md:inline-block">
               Reporter
             </th>
-            <th className="px-4 py-2 text-left text-sm text-gray-700">
+            <th className="px-2 py-2 text-left text-sm text-gray-700">
               Status
             </th>
-            <th className="px-4 py-2 text-left text-sm text-gray-700 hidden lg:block">
+            <th className="px-2 py-2 text-left text-sm text-gray-700 hidden lg:inline-block">
               Date Reported
             </th>
           </tr>
@@ -62,14 +62,16 @@ function TableRow({
       key={ticket.id}
     >
       <td className="px-4 py-2">{ticket.id}</td>
-      <td className="px-4 py-2 hidden sm:block">
+      <td className="px-2 py-2 min-w-25 hidden sm:block">
         <PriorityIconLabel priority={ticket.priority} />
       </td>
-      <td className="px-4 py-2 max-w-2xs truncate whitespace-nowrap overflow-hidden">
+      <td className="px-2 py-2 max-w-2xs truncate whitespace-nowrap overflow-hidden">
         {ticket.description}
       </td>
-      <td className="px-4 py-2 hidden md:block">{ticket.reporter}</td>
-      <td className="px-4 py-2">
+      <td className="px-2 py-2 truncate whitespace-nowrap overflow-hidden hidden md:block">
+        {ticket.reporter}
+      </td>
+      <td className="px-2 py-2 min-w-22">
         {isMobile(width!) ? (
           <div className="flex justify-center">
             <StatusDot status={ticket.status} />
@@ -78,7 +80,7 @@ function TableRow({
           <StatusChip status={ticket.status} />
         )}
       </td>
-      <td className="px-4 py-2 hidden lg:block">
+      <td className="px-2 py-2 hidden lg:block">
         {ticket.date.toLocaleDateString()}
       </td>
     </tr>
