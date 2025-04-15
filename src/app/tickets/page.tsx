@@ -35,7 +35,7 @@ export default function TicketsPage() {
 
       {/* Desktop TicketDetail: Side panel */}
       {selectedTicket && (
-        <div className="hidden md:block md:w-1/2 xl:w-1/3 border-l border-gray-200 overflow-auto bg-white z-40">
+        <div className="hidden md:block md:w-1/2 xl:w-1/3 border-l border-gray-200 overflow-auto bg-gray-50 z-40">
           <TicketDetail
             ticket={selectedTicket}
             setSelectedTicket={setSelectedTicket}
@@ -45,8 +45,8 @@ export default function TicketsPage() {
 
       {/* Mobile TicketDetail: Overlay panel */}
       {selectedTicket && (
-        <div className="fixed inset-0 z-50 flex md:hidden bg-white">
-          <div className="w-full overflow-auto border-l border-gray-200">
+        <div className="fixed inset-0 z-50 flex md:hidden bg-gray-50">
+          <div className="w-full overflow-auto border-l border-gray-200 bg-gray-50">
             <TicketDetail
               ticket={selectedTicket}
               setSelectedTicket={setSelectedTicket}
