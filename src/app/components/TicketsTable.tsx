@@ -71,15 +71,19 @@ function TableRow({
       <td className="px-2 py-2 truncate whitespace-nowrap overflow-hidden hidden md:block">
         {ticket.reporter}
       </td>
-      <td className="px-2 py-2 min-w-22">
-        {isMobile(width!) ? (
-          <div className="flex justify-center">
+
+      {isMobile(width!) ? (
+        <td className="px-2 py-2 min-w-4">
+          <div className="pl-4">
             <StatusDot status={ticket.status} />
           </div>
-        ) : (
+        </td>
+      ) : (
+        <td className="px-2 py-2 min-w-22">
           <StatusChip status={ticket.status} />
-        )}
-      </td>
+        </td>
+      )}
+
       <td className="px-2 py-2 hidden lg:block">
         {ticket.date.toLocaleDateString()}
       </td>
