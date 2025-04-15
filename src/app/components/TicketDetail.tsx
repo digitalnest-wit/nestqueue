@@ -46,9 +46,9 @@ export default function TicketDetail({
           <p className="text-sm">
             <a
               className="underline hover:text-pink-400"
-              href={`mailto:${ticket.reporter}`}
+              href={`mailto:${ticket.reporterEmail}`}
             >
-              {ticket.reporter}
+              {ticket.reporterEmail}
             </a>
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function TicketDetail({
           <p className="text-gray-500 text-sm font-semibold uppercase">
             Reported Date
           </p>
-          <p className="text-sm">{ticket.date.toLocaleDateString()}</p>
+          <p className="text-sm">{ticket.date.toDateString()}</p>
         </div>
       </div>
     </div>

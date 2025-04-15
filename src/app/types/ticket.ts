@@ -4,7 +4,7 @@ export default interface Ticket {
   description: string;
   site: SiteLocation;
   category: Category;
-  reporter: string;
+  reporterEmail: string;
   reporterRole: ReporterOrganizationRole;
   date: Date;
   priority: Priority;
