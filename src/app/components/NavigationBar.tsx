@@ -12,7 +12,10 @@ export default function NavigationBar() {
   return (
     <nav className="flex flex-wrap items-center justify-between w-full py-4 md:py-0 px-4 text-lg bg-gray-900">
       <div>
-        <a className="text-white" href="/">
+        <a
+          className="bg-gray-900 hover:bg-gray-800 rounded-4xl p-1 px-1.5 my-3 block hover:cursor-pointer text-white"
+          href="/"
+        >
           NestQueue
         </a>
       </div>
@@ -37,26 +40,32 @@ export default function NavigationBar() {
 
       <div
         className={
-          "w-full md:flex md:items-center md:w-auto " +
-          (didCollapseNavbar ? "" : "hidden")
+          "w-full md:flex md:items-center md:w-auto" +
+          (didCollapseNavbar ? "" : " hidden")
         }
       >
-        <ul className="pt-4 text-base text-white md:flex md:justify-between md:pt-0">
+        <ul className="pt-4 text-base text-white md:flex md:justify-between md:pt-0 md:gap-4">
           <li>
             <a
-              className="md:p-4 py-2 block hover:text-pink-400"
+              className="bg-gray-900 hover:bg-gray-800 rounded-4xl p-1 px-1.5 my-3 block hover:cursor-pointer"
               href="/tickets"
             >
               Tickets
             </a>
           </li>
           <li>
-            <a className="md:p-4 py-2 block hover:text-pink-400" href="#">
+            <a
+              className="bg-gray-900 hover:bg-gray-800 rounded-4xl p-1 px-1.5 my-3 block hover:cursor-pointer"
+              href="#"
+            >
               Analytics
             </a>
           </li>
           <li>
-            <a className="md:p-4 py-2 block hover:text-pink-400" href="#">
+            <a
+              className="bg-gray-900 hover:bg-gray-800 rounded-4xl p-1 px-1.5 my-3 block hover:cursor-pointer"
+              href="#"
+            >
               Settings
             </a>
           </li>
