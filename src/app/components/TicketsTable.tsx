@@ -1,8 +1,11 @@
 "use client";
 
 import Ticket from "../types/ticket";
-import StatusChip from "./Status";
+import StatusChip, { StatusDot } from "./Status";
 import PriorityIcon from "./PriorityIcon";
+import useWindowSize from "../hooks/useWindowSize";
+import { isMobile } from "../types/window";
+import { JSX } from "react";
 
 export default function TicketsTable({
   tickets,
@@ -51,6 +54,8 @@ function TableRow({
   ticket: Ticket;
   onClick: (ticket: Ticket) => void;
 }) {
+  const { width } = useWindowSize();
+
   return (
     <tr
       className="hover:bg-gray-50"
@@ -66,7 +71,13 @@ function TableRow({
       </td>
       <td className="px-4 py-2 hidden md:block">{ticket.reporter}</td>
       <td className="px-4 py-2">
-        <StatusChip status={ticket.status} />
+        {isMobile(width!) ? (
+          <div className="flex justify-center">
+            <StatusDot status={ticket.status} />
+          </div>
+        ) : (
+          <StatusChip status={ticket.status} />
+        )}
       </td>
       <td className="px-4 py-2 hidden lg:block">
         {ticket.date.toLocaleDateString()}
