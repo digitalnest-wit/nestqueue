@@ -1,5 +1,6 @@
 export default interface Ticket {
   id: string;
+  title: string;
   description: string;
   reporter: string;
   date: Date;
