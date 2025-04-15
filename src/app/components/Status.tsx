@@ -17,7 +17,7 @@ export default function StatusChip({ status }: { status: Status }) {
   const color = colorForStatus(status);
 
   return (
-    <span className={`${color} text-white text-xs rounded-lg p-1`}>
+    <span className={`${color} text-white text-xs rounded-4xl p-1 px-1.5`}>
       {label}
     </span>
   );

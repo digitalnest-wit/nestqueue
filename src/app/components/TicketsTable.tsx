@@ -79,7 +79,7 @@ function TableRow({
           </div>
         </td>
       ) : (
-        <td className="px-2 py-2 min-w-22">
+        <td className="px-2 py-2 min-w-24">
           <StatusChip status={ticket.status} />
         </td>
       )}
