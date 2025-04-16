@@ -1,10 +1,11 @@
 "use client";
 
 import Ticket from "../types/ticket";
-import StatusChip, { StatusDot } from "./Status";
 import PriorityIconLabel from "./PriorityIcon";
 import useWindowSize from "../hooks/useWindowSize";
 import { isMobile } from "../types/window";
+import Chip from "./Chip";
+import { colorForStatus, formatStatusLabel } from "../common";
 
 export default function TicketsTable({
   tickets,
@@ -52,6 +53,8 @@ function TableRow({
   onClick: (ticket: Ticket) => void;
 }) {
   const { width } = useWindowSize();
+  const statusColor = colorForStatus(ticket.status);
+  const status = formatStatusLabel(ticket.status);
 
   return (
     <tr
@@ -71,14 +74,18 @@ function TableRow({
       </td>
 
       {isMobile(width!) ? (
-        <td className="px-2 py-2 min-w-4">
-          <div className="pl-4">
-            <StatusDot status={ticket.status} />
-          </div>
+        <td className="px-2 py-2 min-w-15">
+          <div
+            className={`ml-4 bg-${colorForStatus(
+              ticket.status
+            )} w-1 h-1 rounded-full p-1`}
+          ></div>
         </td>
       ) : (
         <td className="px-2 py-2 min-w-24">
-          <StatusChip status={ticket.status} />
+          <Chip bgColor={statusColor}>
+            <span className="text-xs">{status}</span>
+          </Chip>
         </td>
       )}
 

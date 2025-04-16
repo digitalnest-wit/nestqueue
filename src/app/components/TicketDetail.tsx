@@ -2,10 +2,11 @@
 
 import { Dispatch, SetStateAction } from "react";
 
-import StatusChip from "@/app/components/Status";
 import { priorityImageName } from "@/app/components/PriorityIcon";
 import Ticket from "../types/ticket";
 import Button from "./Button";
+import Chip from "./Chip";
+import { colorForStatus, formatStatusLabel } from "../common";
 
 export default function TicketDetail({
   ticket,
@@ -14,6 +15,9 @@ export default function TicketDetail({
   ticket: Ticket;
   setSelectedTicket: Dispatch<SetStateAction<Ticket | null>>;
 }) {
+  const statusColor = colorForStatus(ticket.status);
+  const status = formatStatusLabel(ticket.status);
+
   return (
     <div className="p-4 bg-gray-50">
       <Button onClick={() => setSelectedTicket(null)}>
@@ -24,7 +28,9 @@ export default function TicketDetail({
         <div>
           <h1 className="text-xl text-gray-400">TK {ticket.id}</h1>
           <h1 className="text-xl">{ticket.title}</h1>
-          <StatusChip status={ticket.status} />
+          <Chip bgColor={statusColor}>
+            <span className="text-xs">{status}</span>
+          </Chip>
         </div>
       </div>
       <div className="p-3 mb-auto">
