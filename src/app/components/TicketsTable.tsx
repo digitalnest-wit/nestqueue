@@ -22,9 +22,7 @@ export default function TicketsTable({
             <th className="px-2 py-2 text-left text-sm text-gray-700 hidden sm:inline-block">
               Priority
             </th>
-            <th className="px-2 py-2 text-left text-sm text-gray-700">
-              Description
-            </th>
+            <th className="px-2 py-2 text-left text-sm text-gray-700">Title</th>
             <th className="px-2 py-2 text-left text-sm text-gray-700 hidden md:inline-block">
               Reporter
             </th>
@@ -66,7 +64,7 @@ function TableRow({
         <PriorityIconLabel priority={ticket.priority} />
       </td>
       <td className="px-2 py-2 max-w-2xs truncate whitespace-nowrap overflow-hidden">
-        {ticket.description}
+        {ticket.title}
       </td>
       <td className="px-2 py-2 truncate whitespace-nowrap overflow-hidden hidden md:block">
         {ticket.reporterEmail}

@@ -28,11 +28,21 @@ export default function TicketDetail({
         </div>
       </div>
       <div className="p-3 mb-auto">
-        <div className="my-3">
+        <div>
           <p className="text-gray-500 text-sm font-semibold uppercase">
             Description
           </p>
           <p className="text-sm">{ticket.description}</p>
+        </div>
+        <div className="my-3">
+          <p className="text-gray-500 text-sm font-semibold uppercase">
+            Category
+          </p>
+          <p className="text-sm capitalize">{ticket.category}</p>
+        </div>
+        <div className="my-3 border-b-2 pb-3 border-gray-100">
+          <p className="text-gray-500 text-sm font-semibold uppercase">Site</p>
+          <p className="text-sm capitalize">{ticket.site}</p>
         </div>
         <div className="my-3">
           <p className="text-gray-500 text-sm font-semibold uppercase">
@@ -47,7 +57,7 @@ export default function TicketDetail({
             </a>
           </p>
         </div>
-        <div className="my-3">
+        <div className="my-3 border-b-2 pb-3 border-gray-100">
           <p className="text-gray-500 text-sm font-semibold uppercase">
             Reported Date
           </p>
