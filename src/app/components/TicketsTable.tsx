@@ -69,7 +69,7 @@ function TableRow({
         {ticket.description}
       </td>
       <td className="px-2 py-2 truncate whitespace-nowrap overflow-hidden hidden md:block">
-        {ticket.reporter}
+        {ticket.reporterEmail}
       </td>
 
       {isMobile(width!) ? (
