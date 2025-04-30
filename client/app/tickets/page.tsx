@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 
@@ -13,22 +14,29 @@ import { SearchBar } from "@/components/search-bar";
 export default function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const params = useSearchParams();
+  const query = params.get("q") || "";
+
+  const [searchValue, setSearchValue] = useState(query);
 
   const fetchTickets = useCallback(async () => {
     try {
       setLoading(true);
-      const endpoint = `/tickets?q=${query}`;
+
+      const endpoint = `/tickets?q=${searchValue}`;
       const response: AxiosResponse<GetTicketsResponse> = await server.get(endpoint);
+
       setTickets(response.data.tickets);
+      setError("");
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [query]);
+  }, [searchValue]);
 
   // Initial fetch on page load
   useEffect(() => {
@@ -49,7 +57,7 @@ export default function TicketsPage() {
   return (
     <div>
       <StatusBanner />
-      <SearchBar placeholder="Search tickets..." onChange={setQuery} />
+      <SearchBar placeholder="Search tickets..." onSubmit={setSearchValue} />
       {selectedTicket && (
         <TicketDetail ticket={selectedTicket} onDismiss={() => setSelectedTicket(null)} />
       )}

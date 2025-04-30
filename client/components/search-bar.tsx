@@ -3,10 +3,10 @@ import { ChangeEvent, useState } from "react";
 export interface SearchBarProps {
   className?: string;
   placeholder: string;
-  onChange: (text: string) => void;
+  onSubmit: (text: string) => void;
 }
 
-export function SearchBar({ className, placeholder, onChange }: SearchBarProps) {
+export function SearchBar({ className, placeholder, onSubmit }: SearchBarProps) {
   const [value, setValue] = useState("");
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -16,7 +16,7 @@ export function SearchBar({ className, placeholder, onChange }: SearchBarProps) 
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      onChange(value);
+      onSubmit(value);
     }
   };
 
