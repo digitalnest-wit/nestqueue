@@ -1,3 +1,5 @@
+"use client";
+
 import Ticket from "@/lib/types/ticket";
 import TicketTableRow from "./tickets-table-row";
 
