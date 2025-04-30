@@ -1,6 +1,7 @@
 "use client";
 
 import Ticket from "@/lib/types/ticket";
+import Button from "./button";
 
 export interface TicketDetailProps {
   ticket: Ticket;
@@ -24,7 +25,9 @@ export default function TicketDetail({ ticket, onDismiss }: TicketDetailProps) {
       <p>Status: {ticket.status}</p>
       <p>CreatedAt: {ticketCreatedAt}</p>
       <p>UpdatedAt: {ticketUpdatedAt}</p>
-      <button onClick={onDismiss}>Close</button>
+      <Button className="bg-gray-900 hover:bg-gray-700" onClick={onDismiss}>
+        Close
+      </Button>
     </div>
   );
 }
