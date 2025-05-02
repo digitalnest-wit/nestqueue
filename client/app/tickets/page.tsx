@@ -12,7 +12,7 @@ import TicketsTable from "@/components/tickets/tickets-table";
 import { SearchBar } from "@/components/ui/search-bar";
 import Dropdown from "@/components/ui/dropdown";
 import { ArrowsUpDownIcon, FilterIcon, XIcon } from "@/components/ui/icons";
-import useWindow, { isMobile } from "@/hooks/window";
+import useWindow, { isMobile } from "@/lib/hooks/use-window";
 import Button from "@/components/ui/button";
 
 type TicketFilterKey = "Priority" | "Category" | "Title" | "Assigned To" | "Status" | "Last Modified";
