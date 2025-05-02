@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Button from "./button";
-import { ThreeHorizontalLinesIcon } from "@/components/icons";
+import { ThreeHorizontalLinesIcon } from "./icons";
 
 export default function NavBar() {
   const [isExpanded, setIsExpanded] = useState(false);

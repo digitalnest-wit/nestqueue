@@ -1,8 +1,8 @@
 "use client";
 
 import Ticket from "@/lib/types/ticket";
-import Button from "./button";
-import { BuildingOfficeIcon, CalendarIcon, PersonIcon, TagIcon } from "@/components/icons";
+import Button from "../ui/button";
+import { BuildingOfficeIcon, CalendarIcon, PersonIcon, TagIcon } from "../ui/icons";
 import TicketAssignedTo from "./ticket-assigned-to";
 
 export interface TicketDetailProps {

@@ -1,3 +1,5 @@
+"use client";
+
 import { MouseEvent, ReactNode, useState } from "react";
 import { CheckIcon } from "./icons";
 
