@@ -1,6 +1,6 @@
-import TicketsPage from "./tickets/page";
 import Login from "./login/login-page";
+import TicketsPage from "@/app/tickets/page";
 
-export default function HomePage() {
+export default function Page() {
   return <TicketsPage />;
 }

@@ -8,29 +8,30 @@ export interface TicketsTableProps {
   onClick: (ticket: Ticket) => void;
 }
 
-export default function TicketsTabel({ tickets, onClick }: TicketsTableProps) {
+export default function TicketsTable({ tickets, onClick }: TicketsTableProps) {
   const TicketRows = () => {
-    return tickets.map((ticket) => (
-      <TicketTableRow key={ticket.id} ticket={ticket} onClick={() => onClick(ticket)} />
-    ));
+    return tickets.map((ticket) => <TicketTableRow key={ticket.id} ticket={ticket} onClick={() => onClick(ticket)} />);
   };
 
+  const commonStyles = "px-4 py-2 text-left text-sm text-gray-700";
+
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Priority</th>
-          <th>Category</th>
-          <th>Title</th>
-          <th>Assigned To</th>
-          <th>Status</th>
-          <th>ID</th>
-          <th>Last Modified</th>
-        </tr>
-      </thead>
-      <tbody>
-        <TicketRows />
-      </tbody>
-    </table>
+    <div className="overflow-x-auto">
+      <table className="table-auto min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className={`${commonStyles}`}>Priority</th>
+            <th className={`${commonStyles} hidden md:block`}>Category</th>
+            <th className={`${commonStyles}`}>Title</th>
+            <th className={`${commonStyles} hidden md:block`}>Assigned To</th>
+            <th className={`${commonStyles}`}>Status</th>
+            <th className={`${commonStyles} hidden sm:block`}>Last Modified</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200 text-sm">
+          <TicketRows />
+        </tbody>
+      </table>
+    </div>
   );
 }

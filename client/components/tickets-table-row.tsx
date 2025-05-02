@@ -1,6 +1,7 @@
 "use client";
 
 import Ticket from "@/lib/types/ticket";
+import TicketAssignedTo from "./ticket-assigned-to";
 
 export interface TicketsTableRowProps {
   ticket: Ticket;
@@ -8,17 +9,38 @@ export interface TicketsTableRowProps {
 }
 
 export default function TicketTableRow({ ticket, onClick }: TicketsTableRowProps) {
-  const ticketDate = new Date(ticket.updatedAt).toDateString();
+  const ticketUpdatedAt = new Date(ticket.updatedAt).toDateString();
+  const columnStyles = "px-4 py-4 text-left text-gray-700";
+
+  let statusStyle: string;
+
+  switch (ticket.status) {
+    case "Open":
+      statusStyle = "text-green-500";
+      break;
+    case "Active":
+      statusStyle = "text-blue-500";
+      break;
+    case "Closed":
+      statusStyle = "text-gray-500";
+      break;
+    case "Rejected":
+      statusStyle = "text-red-500";
+      break;
+  }
 
   return (
-    <tr key={ticket.id} onClick={() => onClick(ticket)}>
-      <th>{ticket.priority}</th>
-      <th>{ticket.category}</th>
-      <th>{ticket.title}</th>
-      <th>{ticket.assignedTo || "Unassigned"}</th>
-      <th>{ticket.status}</th>
-      <th>{ticket.id}</th>
-      <th>{ticketDate}</th>
+    <tr className="hover:bg-gray-50" key={ticket.id} onClick={() => onClick(ticket)}>
+      <td className={`${columnStyles} font-bold min-w-[5rem]`}>P{ticket.priority}</td>
+      <td className={`${columnStyles} font-normal min-w-[5rem] hidden md:block`}>{ticket.category}</td>
+      <td className={`${columnStyles} font-normal min-w-[10rem] truncate whitespace-nowrap overflow-hidden`}>{ticket.title}</td>
+      <td className={`${columnStyles} font-normal hidden md:block`}>
+        <TicketAssignedTo assignedTo={ticket.assignedTo} />
+      </td>
+      <td className={`${columnStyles} font-bold`}>
+        <span className={statusStyle}>{ticket.status}</span>
+      </td>
+      <td className={`${columnStyles} font-normal min-w-[10rem] hidden sm:block`}>{ticketUpdatedAt}</td>
     </tr>
   );
 }

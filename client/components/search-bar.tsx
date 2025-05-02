@@ -14,6 +14,7 @@ export function SearchBar({ className, placeholder, onSubmit }: SearchBarProps) 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     setValue(newValue);
+    onSubmit(value);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
