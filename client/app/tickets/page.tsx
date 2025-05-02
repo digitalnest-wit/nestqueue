@@ -25,7 +25,7 @@ export default function TicketsPage() {
   const [error, setError] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
-  const query = searchParams.get("q") || "";
+  const query = searchParams?.get("q") || "";
 
   const { width: windowWidth } = useWindow();
 
