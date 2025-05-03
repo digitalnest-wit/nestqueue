@@ -166,7 +166,7 @@ func (h *TicketHandler) handleUpdateTicket(w http.ResponseWriter, r *http.Reques
 	ctx, cancel := context.WithTimeout(context.Background(), _databaseTimeoutPolicy)
 	defer cancel()
 
-	err := h.store.UpdateTicket(ctx, ticketId, updates)
+	ticket, err := h.store.UpdateTicket(ctx, ticketId, updates)
 	if err != nil {
 		switch {
 		case errors.Is(err, storage.ErrTicketNotFound):
@@ -182,7 +182,9 @@ func (h *TicketHandler) handleUpdateTicket(w http.ResponseWriter, r *http.Reques
 		}
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	w.WriteHeader(http.StatusOK)
+
+	encodeJSON(h, w, ticket)
 }
 
 // handleDeleteTicket handles deleting a ticket

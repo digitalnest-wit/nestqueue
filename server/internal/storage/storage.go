@@ -122,7 +122,7 @@ func (s *TicketStore) FindTicket(ctx context.Context, id string) (*models.Ticket
 }
 
 // UpdateTicket updates an existing ticket
-func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[string]any) error {
+func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[string]any) (*models.Ticket, error) {
 	var (
 		updatesDoc = bson.D{}
 		sugar      = s.log.Sugar()
@@ -131,7 +131,7 @@ func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[s
 	objectId, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		sugar.Debugw("bad id provided", err)
-		return err
+		return nil, err
 	}
 
 	for k, v := range updates {
@@ -172,20 +172,20 @@ func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[s
 		updatesDoc = append(updatesDoc, bson.E{Key: "updatedAt", Value: time.Now()})
 	}
 
-	res, err := s.collection.UpdateByID(ctx, objectId, bson.D{{Key: "$set", Value: updatesDoc}})
+	_, err = s.collection.UpdateByID(ctx, objectId, bson.D{{Key: "$set", Value: updatesDoc}})
 	if err != nil {
 		sugar.Error(err)
-		return err
+		return nil, err
 	}
 
-	if res.MatchedCount == 0 {
-		sugar.Debugw("ticket not found", "ticket.id", id)
-		return ErrTicketNotFound
+	updatedTicket, err := s.FindTicket(ctx, id)
+	if err != nil {
+		return nil, err
 	}
 
 	sugar.Debugw("ticket updated", "ticket.id", id, "updates", len(updates))
 
-	return nil
+	return updatedTicket, nil
 }
 
 // DeleteTicket removes a ticket from the store
