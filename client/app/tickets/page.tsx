@@ -22,6 +22,29 @@ export default function TicketsPage() {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const { width: windowWidth } = useWindow();
 
+  const didSelectFilter = filter !== "Last Modified";
+  const didSelectOrder = order !== "Descending";
+
+  const FilterControls = () => {
+    return (
+      <>
+        <Dropdown
+          opts={["Priority", "Category", "Title", "Assigned To", "Status", "Last Modified"]}
+          onSelect={(_e, opt) => setFilter(opt as FilterKey)}
+          value={filter ? [filter] : []}
+        >
+          <FilterIcon className={`p-1 ${didSelectFilter ? "py-1.5" : "py-2"} text-sm`} label={didSelectFilter ? filter : undefined} />
+        </Dropdown>
+        <Dropdown opts={["Ascending", "Descending"]} onSelect={(_e, opt) => setOrder(opt as OrderKey)} value={order ? [order] : []}>
+          <ArrowsUpDownIcon
+            className={`p-1 ${didSelectOrder ? "py-1.5" : "py-2"} text-sm`}
+            label={didSelectOrder ? order : undefined}
+          />
+        </Dropdown>
+      </>
+    );
+  };
+
   return (
     <div className="w-full">
       {/* Main Content Area */}
@@ -31,49 +54,19 @@ export default function TicketsPage() {
             selectedTicket && isMobile(windowWidth!) && "hidden"
           }`}
         >
-          {/* Filters and Search */}
-          <div className="flex gap-4 items-center p-4">
-            <SearchBar
-              className={`w-full ${selectedTicket ? "w-[100%]" : "sm:w-[35%]"}`}
-              placeholder="Search tickets..."
-              onSubmit={setSearchValue}
-            />
+          {/* Search and Filters */}
+          <div className="flex w-full gap-2 items-center p-4">
+            <SearchBar className="w-[100%] lg:w-[50%]" placeholder="Search tickets..." onSubmit={setSearchValue} />
 
-            {/* Desktop Filter Controls */}
-            <div className={`hidden ${selectedTicket ? "" : "md:flex"} gap-2 items-center`}>
-              <Dropdown
-                opts={["Priority", "Category", "Title", "Assigned To", "Status", "Last Modified"]}
-                onSelect={(_e, opt) => setFilter(opt as FilterKey)}
-                value={filter ? [filter] : []}
-              >
-                <FilterIcon className="p-1" label={filter} />
-              </Dropdown>
-              <Dropdown
-                opts={["Ascending", "Descending"]}
-                onSelect={(_e, opt) => setOrder(opt as OrderKey)}
-                value={order ? [order] : []}
-              >
-                <ArrowsUpDownIcon className="p-1" label={order} />
-              </Dropdown>
+            {/* Filter Controls for Desktop (controls hidden when ticket selected and screen size is small) */}
+            <div className={`${selectedTicket && isMobile(windowWidth!) ? "" : "hidden"} lg:flex gap-2 items-center`}>
+              <FilterControls />
             </div>
           </div>
 
-          {/* Mobile Filter Controls */}
-          <div className={`${selectedTicket ? "" : "sm:hidden"} flex gap-3 items-center px-4 pb-4`}>
-            <Dropdown
-              opts={["Priority", "Category", "Title", "Assigned To", "Status", "Last Modified"]}
-              onSelect={(_e, opt) => setFilter(opt as FilterKey)}
-              value={filter ? [filter] : []}
-            >
-              <FilterIcon className="p-1" label={filter} />
-            </Dropdown>
-            <Dropdown
-              opts={["Ascending", "Descending"]}
-              onSelect={(_e, opt) => setOrder(opt as OrderKey)}
-              value={order ? [order] : []}
-            >
-              <ArrowsUpDownIcon className="p-1" label={order} />
-            </Dropdown>
+          {/* Filter Controls for Mobile (controls hidden on larger screen sizes) */}
+          <div className={`px-4 pb-4 flex lg:hidden gap-2 items-center`}>
+            <FilterControls />
           </div>
 
           {/* Error Banner */}
