@@ -8,7 +8,7 @@ const server = axios.create({
   },
 });
 
-export async function getTickets(query?: string): Promise<Ticket[]> {
+export async function getTickets(query: string = ""): Promise<Ticket[]> {
   const response: AxiosResponse<{
     count: number;
     tickets: Ticket[];
