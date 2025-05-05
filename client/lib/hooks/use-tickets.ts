@@ -79,7 +79,10 @@ export function useTickets({ query, filter = "Last Modified", order = "Descendin
   const refreshTickets = async () => {
     try {
       setIsLoading(true);
-      setTickets(await getTickets());
+      const response = await getTickets(query);
+      // Sort the tickets based on filter and order props
+      const sortedTickets = sortTickets(response, filterToTicketKey(filter), order);
+      setTickets(sortedTickets);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to refresh tickets"));
@@ -122,7 +125,7 @@ export function useTicket(id: string) {
   }, [id]);
 
   const updateCurrentTicket = async (updates: TicketUpdates) => {
-    if (!id) return;
+    if (!id) return null;
 
     try {
       setIsLoading(true);
