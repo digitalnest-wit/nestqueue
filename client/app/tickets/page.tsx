@@ -18,7 +18,7 @@ export default function TicketsPage() {
   const [searchValue, setSearchValue] = useState(query);
   const [filter, setFilter] = useState<FilterKey>("Last Modified");
   const [order, setOrder] = useState<OrderKey>("Descending");
-  const { tickets, error } = useTickets({ query: searchValue, filter, order });
+  const { tickets, error, refreshTickets } = useTickets({ query: searchValue, filter, order });
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const { width: windowWidth } = useWindow();
 
@@ -29,13 +29,19 @@ export default function TicketsPage() {
     return (
       <>
         <Dropdown
+          className="border border-gray-200 hover:bg-gray-100"
           opts={["Priority", "Category", "Title", "Assigned To", "Status", "Last Modified"]}
           onSelect={(_e, opt) => setFilter(opt as FilterKey)}
-          value={filter ? [filter] : []}
+          value={filter}
         >
           <FilterIcon className={`p-1 ${didSelectFilter ? "py-1.5" : "py-2"} text-sm`} label={didSelectFilter ? filter : undefined} />
         </Dropdown>
-        <Dropdown opts={["Ascending", "Descending"]} onSelect={(_e, opt) => setOrder(opt as OrderKey)} value={order ? [order] : []}>
+        <Dropdown
+          className="border border-gray-200 hover:bg-gray-100"
+          opts={["Ascending", "Descending"]}
+          onSelect={(_e, opt) => setOrder(opt as OrderKey)}
+          value={order}
+        >
           <ArrowsUpDownIcon
             className={`p-1 ${didSelectOrder ? "py-1.5" : "py-2"} text-sm`}
             label={didSelectOrder ? order : undefined}
@@ -85,7 +91,7 @@ export default function TicketsPage() {
         {/* Selected Ticket */}
         {selectedTicket && (
           <div className="block w-full h-full lg:w-1/3 md:w-1/2 border-l border-gray-200 overflow-y-auto bg-gray-50 shadow-md transition-all duration-300 ease-in-out">
-            <TicketDetail ticket={selectedTicket} onDismiss={() => setSelectedTicket(null)} />
+            <TicketDetail ticketId={selectedTicket.id} onDismiss={() => setSelectedTicket(null)} onUpdate={refreshTickets} />
           </div>
         )}
       </div>

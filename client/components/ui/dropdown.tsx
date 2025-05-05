@@ -38,7 +38,7 @@ export default function Dropdown({ className, value, opts, onSelect, children }:
   return (
     <div>
       <button
-        className={`px-1 cursor-pointer border border-gray-200 hover:bg-gray-100 transition-colors duration-300 text-gray-600 rounded ${className}`}
+        className={`px-1 cursor-pointer transition-colors duration-300 text-gray-600 rounded ${className}`}
         onClick={handleClick}
         onBlur={handleBlur}
       >
