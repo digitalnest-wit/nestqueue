@@ -4,13 +4,14 @@ import { MouseEvent, ReactNode, useState } from "react";
 import { CheckIcon } from "./icons";
 
 export interface DropdownProps {
-  value: string[];
+  className?: string;
+  value: string[] | string;
   opts: string[];
   onSelect: (event: MouseEvent<HTMLElement>, opt: string) => void;
   children: ReactNode;
 }
 
-export default function Dropdown({ value, opts, onSelect, children }: DropdownProps) {
+export default function Dropdown({ className, value, opts, onSelect, children }: DropdownProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleClick = (event: MouseEvent<HTMLElement>) => {
@@ -25,10 +26,19 @@ export default function Dropdown({ value, opts, onSelect, children }: DropdownPr
 
   const handleBlur = () => setTimeout(() => setIsExpanded(false), 300);
 
+  const isSelected = (opt: string) => {
+    if (typeof value === "string") {
+      return (value as string) === opt;
+    }
+
+    // The only other possible type value can be is string[]
+    return (value as string[]).includes(opt);
+  };
+
   return (
-    <div className="">
+    <div>
       <button
-        className="px-1 cursor-pointer border border-gray-200 hover:bg-gray-100 transition-colors duration-300 text-gray-600 rounded"
+        className={`px-1 cursor-pointer border border-gray-200 hover:bg-gray-100 transition-colors duration-300 text-gray-600 rounded ${className}`}
         onClick={handleClick}
         onBlur={handleBlur}
       >
@@ -44,7 +54,7 @@ export default function Dropdown({ value, opts, onSelect, children }: DropdownPr
               className={`px-4 py-2 text-sm cursor-pointer bg-gray-50 hover:bg-gray-200`}
             >
               <span className="flex items-center gap-1">
-                {value.includes(opt) && <CheckIcon className="absolute -translate-x-3" />}
+                {isSelected(opt) && <CheckIcon className="absolute -translate-x-3" />}
                 <span className="pl-2">{opt}</span>
               </span>
             </li>
