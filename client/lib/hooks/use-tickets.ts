@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Ticket from "../types/ticket";
 import { createTicket, deleteTicket, getTicket, getTickets, NewTicket, TicketUpdates, updateTicket } from "../api/tickets";
-import { AxiosError, AxiosResponse } from "axios";
 
 export type FilterKey = "Priority" | "Category" | "Title" | "Assigned To" | "Status" | "Last Modified";
 export type OrderKey = "Ascending" | "Descending";
