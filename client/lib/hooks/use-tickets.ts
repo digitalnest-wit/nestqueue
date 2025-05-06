@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Ticket from "../types/ticket";
 import { createTicket, deleteTicket, getTicket, getTickets, NewTicket, TicketUpdates, updateTicket } from "../api/tickets";
+import { AxiosError, AxiosResponse } from "axios";
 
 export type FilterKey = "Priority" | "Category" | "Title" | "Assigned To" | "Status" | "Last Modified";
 export type OrderKey = "Ascending" | "Descending";
@@ -20,9 +21,22 @@ export function useTickets({ query, filter = "Last Modified", order = "Descendin
     async function fetchTickets() {
       try {
         setIsLoading(true);
+
         const response = await getTickets(query);
+        if (response.status === 404) {
+          const queryContext = query && query !== "" ? `matching '${query}'` : "";
+          setError(new Error(`No tickets found${queryContext}. Please try again.`));
+          return;
+        } else if (response.status === 500) {
+          setError(new Error("An internal server occurred. Please try again."));
+          return;
+        } else if (response.status < 200 || response.status > 299) {
+          setError(new Error(response.statusText));
+          return;
+        }
+
         // Sort the tickets based on filter and order props
-        const sortedTickets = sortTickets(response, filterToTicketKey(filter), order);
+        const sortedTickets = sortTickets(response.data.tickets, filterToTicketKey(filter), order);
         setTickets(sortedTickets);
         setError(null);
       } catch (err) {
@@ -35,58 +49,104 @@ export function useTickets({ query, filter = "Last Modified", order = "Descendin
     fetchTickets();
   }, [query, filter, order]);
 
-  const addTicket = async (newTicket: NewTicket) => {
+  const addTicket = async (newTicket: NewTicket): Promise<Ticket | undefined> => {
     try {
       setIsLoading(true);
-      const createdTicket = await createTicket(newTicket);
-      setTickets((prev) => [...prev, createdTicket]);
-      return createdTicket;
+
+      const response = await createTicket(newTicket);
+      if (response.status === 500) {
+        setError(new Error("An internal server occurred. Please try again."));
+        return;
+      } else if (response.status < 200 || response.status > 299) {
+        setError(new Error(response.statusText));
+        return;
+      }
+
+      setTickets((prev) => [...prev, response.data]);
+      setError(null);
+      return response.data;
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to create ticket"));
-      throw err;
+      return;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const editTicket = async (id: string, updates: TicketUpdates) => {
+  const editTicket = async (id: string, updates: TicketUpdates): Promise<Ticket | undefined> => {
     try {
       setIsLoading(true);
-      const updatedTicket = await updateTicket(id, updates);
+
+      const response = await updateTicket(id, updates);
+      if (response.status === 404) {
+        setError(new Error(`No ticket found matching that ID. Please try again.`));
+        return;
+      } else if (response.status === 500) {
+        setError(new Error("An internal server occurred. Please try again."));
+        return;
+      } else if (response.status < 200 || response.status > 299) {
+        setError(new Error(response.statusText));
+        return;
+      }
+
+      const updatedTicket = response.data;
       setTickets((prev) => prev.map((ticket) => (ticket.id === id ? updatedTicket : ticket)));
+      setError(null);
       return updatedTicket;
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to update ticket"));
-      throw err;
+      return;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const removeTicket = async (id: string) => {
+  const removeTicket = async (id: string): Promise<void | undefined> => {
     try {
       setIsLoading(true);
-      await deleteTicket(id);
+
+      const response = await deleteTicket(id);
+      if (response.status === 500) {
+        setError(new Error("An internal server occurred. Please try again."));
+        return;
+      } else if (response.status < 200 || response.status > 299) {
+        setError(new Error(response.statusText));
+        return;
+      }
+
       setTickets((prev) => prev.filter((ticket) => ticket.id !== id));
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to delete ticket"));
-      throw err;
+      return;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const refreshTickets = async () => {
+  const refreshTickets = async (): Promise<void> => {
     try {
       setIsLoading(true);
+
       const response = await getTickets(query);
+      if (response.status === 404) {
+        const queryContext = query && query !== "" ? `matching '${query}'` : "";
+        setError(new Error(`No tickets found${queryContext}. Please try again.`));
+        return;
+      } else if (response.status === 500) {
+        setError(new Error("An internal server occurred. Please try again."));
+        return;
+      } else if (response.status < 200 || response.status > 299) {
+        setError(new Error(response.statusText));
+        return;
+      }
+
       // Sort the tickets based on filter and order props
-      const sortedTickets = sortTickets(response, filterToTicketKey(filter), order);
+      const sortedTickets = sortTickets(response.data.tickets, filterToTicketKey(filter), order);
       setTickets(sortedTickets);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to refresh tickets"));
-      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +172,20 @@ export function useTicket(id: string) {
     async function fetchTicket() {
       try {
         setIsLoading(true);
-        setTicket(await getTicket(id));
+
+        const response = await getTicket(id);
+        if (response.status === 404) {
+          setError(new Error("No ticket found. Please try again."));
+          return;
+        } else if (response.status === 500) {
+          setError(new Error("An internal server occurred. Please try again."));
+          return;
+        } else if (response.status < 200 || response.status > 299) {
+          setError(new Error(response.statusText));
+          return;
+        }
+
+        setTicket(response.data);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err : new Error("Failed to fetch ticket"));
@@ -124,13 +197,27 @@ export function useTicket(id: string) {
     if (id) fetchTicket();
   }, [id]);
 
-  const updateCurrentTicket = async (updates: TicketUpdates) => {
-    if (!id) return null;
+  const updateCurrentTicket = async (updates: TicketUpdates): Promise<Ticket | undefined> => {
+    if (!id) return;
 
     try {
       setIsLoading(true);
-      const updatedTicket = await updateTicket(id, updates);
+
+      const response = await updateTicket(id, updates);
+      if (response.status === 404) {
+        setError(new Error(`No ticket found matching that ID. Please try again.`));
+        return;
+      } else if (response.status === 500) {
+        setError(new Error("An internal server occurred. Please try again."));
+        return;
+      } else if (response.status < 200 || response.status > 299) {
+        setError(new Error(response.statusText));
+        return;
+      }
+
+      const updatedTicket = response.data;
       setTicket(updatedTicket);
+      setError(null);
       return updatedTicket;
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to update ticket"));

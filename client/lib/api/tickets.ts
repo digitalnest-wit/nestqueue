@@ -8,17 +8,17 @@ const server = axios.create({
   },
 });
 
-export async function getTickets(query: string = ""): Promise<Ticket[]> {
-  const response: AxiosResponse<{
+export async function getTickets(query: string = ""): Promise<
+  AxiosResponse<{
     count: number;
     tickets: Ticket[];
-  }> = await server.get(`/tickets?q=${query}`);
-  return response.data.tickets;
+  }>
+> {
+  return await server.get(`/tickets?q=${query}`);
 }
 
-export async function getTicket(id: string): Promise<Ticket> {
-  const response: AxiosResponse<Ticket> = await server.get(`/tickets/${id}`);
-  return response.data;
+export async function getTicket(id: string): Promise<AxiosResponse<Ticket>> {
+  return await server.get(`/tickets/${id}`);
 }
 
 export interface NewTicket {
@@ -32,9 +32,8 @@ export interface NewTicket {
   status: Status;
 }
 
-export async function createTicket(ticket: NewTicket): Promise<Ticket> {
-  const response: AxiosResponse<Ticket> = await server.post(`/tickets`, ticket);
-  return response.data;
+export async function createTicket(ticket: NewTicket): Promise<AxiosResponse<Ticket>> {
+  return await server.post(`/tickets`, ticket);
 }
 
 export interface TicketUpdates {
@@ -47,14 +46,12 @@ export interface TicketUpdates {
   status?: Status;
 }
 
-export async function updateTicket(id: string, updates: TicketUpdates): Promise<Ticket> {
-  const response: AxiosResponse<Ticket> = await server.put(`/tickets/${id}`, updates);
-  return response.data;
+export async function updateTicket(id: string, updates: TicketUpdates): Promise<AxiosResponse<Ticket>> {
+  return await server.put(`/tickets/${id}`, updates);
 }
 
-export async function deleteTicket(id: string): Promise<void> {
-  const response: AxiosResponse<void> = await server.delete(`/tickets/${id}`);
-  return response.data;
+export async function deleteTicket(id: string): Promise<AxiosResponse<void>> {
+  return await server.delete(`/tickets/${id}`);
 }
 
 export default server;
