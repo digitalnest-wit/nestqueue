@@ -12,7 +12,10 @@ export default function NavBar() {
     <nav className="flex flex-wrap items-center justify-between w-full py-4 md:py-0 px-4 text-lg bg-gray-900">
       <div className="my-4">
         <Link className="text-white" href="/">
-          -&gt; NestQueue
+          <div className="flex items-center gap-3">
+            <img className="w-[2rem] block" src="digitalnest-logo.png" alt="The Digital NEST logo" />
+            NestQueue
+          </div>
         </Link>
       </div>
 
