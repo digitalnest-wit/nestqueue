@@ -33,7 +33,7 @@ export default function TicketTableRow({ ticket, onClick }: TicketsTableRowProps
     <tr className="hover:bg-gray-50" key={ticket.id} onClick={() => onClick(ticket)}>
       <td className={`${columnStyles} font-bold min-w-[5rem]`}>P{ticket.priority}</td>
       <td className={`${columnStyles} font-normal min-w-[5rem] hidden md:block`}>{ticket.category}</td>
-      <td className={`${columnStyles} font-normal min-w-[10rem] truncate whitespace-nowrap overflow-hidden`}>{ticket.title}</td>
+      <td className={`${columnStyles} font-normal min-w-[5rem] truncate whitespace-nowrap overflow-hidden`}>{ticket.title}</td>
       <td className={`${columnStyles} font-normal hidden md:block`}>
         <TicketAssignedTo assignedTo={ticket.assignedTo} />
       </td>

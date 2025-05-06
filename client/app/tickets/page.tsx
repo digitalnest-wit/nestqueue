@@ -1,97 +1,54 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { MouseEvent, useCallback, useEffect, useState } from "react";
-import { AxiosResponse } from "axios";
+import { useState } from "react";
 
 import Ticket from "@/lib/types/ticket";
-import server from "@/lib/server";
-import { GetTicketsResponse } from "@/lib/types/responses/tickets";
-import TicketDetail from "@/components/ticket-detail";
-import TicketsTable from "@/components/tickets-table";
-import { SearchBar } from "@/components/search-bar";
-import Dropdown from "@/components/dropdown";
-import { ArrowsUpDownIcon, FilterIcon, XIcon } from "@/components/icons";
-import useWindow, { isMobile } from "@/hooks/window";
-import Button from "@/components/button";
-
-type TicketFilterKey = "Priority" | "Category" | "Title" | "Assigned To" | "Status" | "Last Modified";
-type SortKey = "Ascending" | "Descending";
+import TicketDetail from "@/components/tickets/ticket-detail";
+import TicketsTable from "@/components/tickets/tickets-table";
+import { SearchBar } from "@/components/ui/search-bar";
+import Dropdown from "@/components/ui/dropdown";
+import { ArrowsUpDownIcon, FilterIcon } from "@/components/ui/icons";
+import useWindow, { isMobile } from "@/lib/hooks/use-window";
+import { FilterKey, OrderKey, useTickets } from "@/lib/hooks/use-tickets";
 
 export default function TicketsPage() {
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const searchParams = useSearchParams();
-  const query = searchParams.get("q") || "";
-
+  const query = searchParams?.get("q") || "";
+  const [searchValue, setSearchValue] = useState(query);
+  const [filter, setFilter] = useState<FilterKey>("Last Modified");
+  const [order, setOrder] = useState<OrderKey>("Descending");
+  const { tickets, error, refreshTickets } = useTickets({ query: searchValue, filter, order });
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const { width: windowWidth } = useWindow();
 
-  const [searchValue, setSearchValue] = useState(query);
-  const [searchFilter, setSearchFilter] = useState<TicketFilterKey>("Last Modified");
-  const [sortOrder, setSortOrder] = useState<SortKey>("Descending");
+  const didSelectFilter = filter !== "Last Modified";
+  const didSelectOrder = order !== "Descending";
 
-  const fetchTickets = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      const endpoint = `/tickets?q=${searchValue}`;
-      const response: AxiosResponse<GetTicketsResponse> = await server.get(endpoint);
-
-      const sortedTickets = sortTickets(response.data.tickets, mapTicketFilterToKey(searchFilter), sortOrder);
-      setTickets(sortedTickets);
-      setError(null);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [searchValue, searchFilter, sortOrder]);
-
-  // Initial fetch on page load
-  useEffect(() => {
-    fetchTickets();
-  }, [fetchTickets]);
-
-  // Function to update a single ticket in the local state
-  const updateTicketLocally = useCallback(
-    (updatedTicket: Ticket) => {
-      setTickets((prevTickets) => {
-        const updated = prevTickets.map((ticket) => (ticket.id === updatedTicket.id ? updatedTicket : ticket));
-
-        // Re-sort to maintain consistency
-        return sortTickets(updated, mapTicketFilterToKey(searchFilter), sortOrder);
-      });
-    },
-    [searchFilter, sortOrder]
-  );
-
-  const handleFilterSelect = (_event: MouseEvent<HTMLElement>, opt: string) => {
-    // This handler should only be passed to the Dropdown component, so this
-    // type cast should never fail.
-    setSearchFilter(opt as TicketFilterKey);
-  };
-
-  // The available filter options
-  const filterOpts: TicketFilterKey[] = ["Priority", "Category", "Title", "Assigned To", "Status", "Last Modified"];
-
-  const handleOrderSelect = (_event: MouseEvent<HTMLElement>, opt: string) => {
-    // This handler should only be passed to the Dropdown component, so this
-    // type cast should never fail.
-    setSortOrder(opt as SortKey);
-  };
-
-  // The available sort order options
-  const sortOpts: SortKey[] = ["Ascending", "Descending"];
-
-  const handleSelectTicket = (ticket: Ticket) => {
-    setSelectedTicket(ticket);
-  };
-
-  const handleCloseSelectedTicket = () => {
-    setSelectedTicket(null);
+  const FilterControls = () => {
+    return (
+      <>
+        <Dropdown
+          className="border border-gray-200 hover:bg-gray-100"
+          opts={["Priority", "Category", "Title", "Assigned To", "Status", "Last Modified"]}
+          onSelect={(_e, opt) => setFilter(opt as FilterKey)}
+          value={filter}
+        >
+          <FilterIcon className={`p-1 ${didSelectFilter ? "py-1.5" : "py-2"} text-sm`} label={didSelectFilter ? filter : undefined} />
+        </Dropdown>
+        <Dropdown
+          className="border border-gray-200 hover:bg-gray-100"
+          opts={["Ascending", "Descending"]}
+          onSelect={(_e, opt) => setOrder(opt as OrderKey)}
+          value={order}
+        >
+          <ArrowsUpDownIcon
+            className={`p-1 ${didSelectOrder ? "py-1.5" : "py-2"} text-sm`}
+            label={didSelectOrder ? order : undefined}
+          />
+        </Dropdown>
+      </>
+    );
   };
 
   return (
@@ -103,102 +60,41 @@ export default function TicketsPage() {
             selectedTicket && isMobile(windowWidth!) && "hidden"
           }`}
         >
-          {/* Filters and Search */}
-          <div className="flex gap-4 items-center p-4">
-            <SearchBar
-              className={`w-full ${selectedTicket ? "w-[100%]" : "sm:w-[35%]"}`}
-              placeholder="Search tickets..."
-              onSubmit={setSearchValue}
-            />
+          {/* Search and Filters */}
+          <div className="flex w-full gap-2 items-center p-4">
+            <SearchBar className="w-[100%] lg:w-[50%]" placeholder="Search tickets..." onSubmit={setSearchValue} />
 
-            {/* Desktop Filter Controls */}
-            <div className={`hidden ${selectedTicket ? "" : "md:flex"} gap-2 items-center`}>
-              <Dropdown opts={filterOpts} onSelect={handleFilterSelect} value={searchFilter ? [searchFilter] : []}>
-                <FilterIcon className="p-1" label={searchFilter} />
-              </Dropdown>
-              <Dropdown opts={sortOpts} onSelect={handleOrderSelect} value={sortOrder ? [sortOrder] : []}>
-                <ArrowsUpDownIcon className="p-1" label={sortOrder} />
-              </Dropdown>
+            {/* Filter Controls for Desktop (controls hidden when ticket selected and screen size is small) */}
+            <div className={`${selectedTicket && isMobile(windowWidth!) ? "" : "hidden"} lg:flex gap-2 items-center`}>
+              <FilterControls />
             </div>
           </div>
 
-          {/* Mobile Filter Controls */}
-          <div className={`${selectedTicket ? "" : "sm:hidden"} flex gap-3 items-center px-4 pb-4`}>
-            <Dropdown opts={filterOpts} onSelect={handleFilterSelect} value={searchFilter ? [searchFilter] : []}>
-              <FilterIcon className="p-1" label={searchFilter} />
-            </Dropdown>
-            <Dropdown opts={sortOpts} onSelect={handleOrderSelect} value={sortOrder ? [sortOrder] : []}>
-              <ArrowsUpDownIcon className="p-1" label={sortOrder} />
-            </Dropdown>
+          {/* Filter Controls for Mobile (controls hidden on larger screen sizes) */}
+          <div className={`px-4 pb-4 flex lg:hidden gap-2 items-center`}>
+            <FilterControls />
           </div>
 
-          {/* Status Banner */}
+          {/* Error Banner */}
           <div className="w-full">
-            {loading && tickets.length === 0 && (
-              <div className="p-4 bg-blue-400 flex gap-3 items-center text-white shadow-md transition-all duration-300 ease-in-out">
-                <p>Loading tickets...</p>
-              </div>
-            )}
             {error && (
-              <div className="p-4 bg-red-400 flex gap-3 items-center text-white shadow-md transition-all duration-300 ease-in-out">
-                <Button onClick={() => setError(null)}>
-                  <XIcon />
-                </Button>
-                <p>{error}</p>
+              <div className="px-4 py-2 bg-red-400 flex gap-3 items-center text-white shadow-md transition-all duration-300 ease-in-out">
+                <p>{error.message}</p>
               </div>
             )}
           </div>
 
           {/* Tickets Table */}
-          <TicketsTable tickets={tickets} onClick={handleSelectTicket} />
+          <TicketsTable tickets={tickets} onClick={(ticket) => setSelectedTicket(ticket)} />
         </div>
 
         {/* Selected Ticket */}
         {selectedTicket && (
           <div className="block w-full h-full lg:w-1/3 md:w-1/2 border-l border-gray-200 overflow-y-auto bg-gray-50 shadow-md transition-all duration-300 ease-in-out">
-            <TicketDetail ticket={selectedTicket} onDismiss={handleCloseSelectedTicket} />
+            <TicketDetail ticketId={selectedTicket.id} onDismiss={() => setSelectedTicket(null)} onUpdate={refreshTickets} />
           </div>
         )}
       </div>
     </div>
   );
-}
-
-function mapTicketFilterToKey(key: TicketFilterKey) {
-  switch (key) {
-    case "Priority":
-      return "priority";
-    case "Category":
-      return "category";
-    case "Title":
-      return "title";
-    case "Assigned To":
-      return "assignedTo";
-    case "Status":
-      return "status";
-    case "Last Modified":
-      return "updatedAt";
-  }
-}
-
-function sortTickets(tickets: Ticket[], field: keyof Ticket, order: SortKey) {
-  return [...tickets].sort((a, b) => {
-    let comparison = 0;
-
-    // Handle different field types
-    if (typeof a[field] === "string" && typeof b[field] === "string") {
-      comparison = (a[field] as string).localeCompare(b[field] as string);
-    } else if (a[field] instanceof Date && b[field] instanceof Date) {
-      comparison = (a[field] as Date).getTime() - (b[field] as Date).getTime();
-    } else if (typeof a[field] === "boolean" && typeof b[field] === "boolean") {
-      comparison = a[field] === b[field] ? 0 : a[field] ? 1 : -1;
-    } else if (typeof a[field] === "number" && typeof b[field] === "number") {
-      comparison = (a[field] as number) - (b[field] as number);
-    } else {
-      // Fallback for other types
-      comparison = String(a[field]).localeCompare(String(b[field]));
-    }
-
-    return order === "Ascending" ? comparison : -comparison;
-  });
 }
