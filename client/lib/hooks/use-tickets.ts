@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Ticket from "../types/ticket";
 import { createTicket, deleteTicket, getTicket, getTickets, NewTicket, TicketUpdates, updateTicket } from "../api/tickets";
-32
+
 export type FilterKey = "Priority" | "Category" | "Title" | "Assigned To" | "Status" | "Last Modified";
 export type OrderKey = "Ascending" | "Descending";
 
