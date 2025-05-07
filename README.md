@@ -69,7 +69,7 @@ A custom port number may also be specified for the server.
 make PORT=3001
 ```
 
-> [!DANGER]
+> [!CAUTION]
 > If you specify a custom port number, make sure to _also update the port number in the client_ environment file.
 > In `client/.env`:
 >
