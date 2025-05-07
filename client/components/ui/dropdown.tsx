@@ -27,12 +27,13 @@ export default function Dropdown({ className, value, opts, onSelect, children }:
   const handleBlur = () => setTimeout(() => setIsExpanded(false), 300);
 
   const isSelected = (opt: string) => {
-    if (typeof value === "string") {
-      return (value as string) === opt;
+    switch (typeof value) {
+      case "string":
+        return (value as string) === opt;
+      default:
+        // The only other possible type 'value' can be is string[]
+        return (value as string[]).includes(opt);
     }
-
-    // The only other possible type value can be is string[]
-    return (value as string[]).includes(opt);
   };
 
   return (
