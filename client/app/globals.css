@@ -26,14 +26,14 @@ body {
 
 @font-face {
   font-family: "Uber Move";
-  src: local("UberMoveTextRegular"), url(@/fonts/UberMoveTextRegular.otf) format("opentype");
+  src: local("UberMoveTextRegular"), url(../fonts/UberMoveTextRegular.otf) format("opentype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Uber Move";
-  src: local("UberMoveTextBold"), url(@/fonts/UberMoveTextBold.otf) format("opentype");
+  src: local("UberMoveTextBold"), url(../fonts/UberMoveTextBold.otf) format("opentype");
   font-weight: bold;
   font-style: normal;
 }

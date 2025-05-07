@@ -2,9 +2,6 @@
 
 An in-house ticket management system.
 
-> [!CAUTION]
-> As of now, there is no client yet. Only the server is available.
-
 ## Prerequisites
 
 - [go](https://go.dev/doc/install): to build and run the server
@@ -13,62 +10,69 @@ An in-house ticket management system.
 
 ## Installation
 
-### 1. Download the repository
+### Download the repository
 
 ```sh
 git clone https://github.com/digitalnest-wit/nestqueue
 ```
 
-### 2. Install the server dependencies
-
-This command downloads all the dependent modules for the server.
+Navigate to the project directory
 
 ```sh
-go -C server mod download
-```
-
-### 3. Install the client dependencies
-
-Navigate to the client directory.
-
-```sh
-cd client
-```
-
-This command installs all the dependencies for the client application.
-
-```sh
-npm install
+cd nestqueue
 ```
 
 ## Running
 
-### 1. Create a cluster on Mongo DB
+### 1. Copy your Mongo DB cluster URI
 
-Click on Connect and find your cluster URI. Place this URI in the server environment file server/.env.
+In the Mongo DB dashboard, click on Connect and find your cluster URI. Place this URI in the server environment file `server/.env`. See `.example.env` for more details.
 
 ```env
 MONGO_URI='YOUR_URI_HERE'
 ```
 
-### 2. Start the server
+### 2. Start the client
 
-Use any port you'd like. Default is 3000.
-
-```sh
-go -C server run cmd/server/main.go --port 3000
-```
-
-### 3. Start the client
-
-Navigate to the client directory.
+Navigate to the `client` directory and create an environment file with a variable `NEXT_PUBLIC_API_URL`:
 
 ```sh
-cd client
+cd client/
+echo 'NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1' >> .env
 ```
 
-Run the client using turbopack. The default port is 8080.
+Run `make`. The Makefile automatically installs dependencies and runs the client on port `8080`.
 
 ```sh
-npm run dev
+cd client/
+make
 ```
+
+A custom port number may also be specified for the client.
+
+```sh
+make PORT=8081
+```
+
+### 3. Start the server
+
+Navigate to the `server` directory and run `make`. The Makefile automatically downloads dependencies and runs the server on port `3000`.
+
+```sh
+cd server/
+make
+```
+
+A custom port number may also be specified for the server.
+
+```sh
+make PORT=3001
+```
+
+> [!DANGER]
+> If you specify a custom port number, make sure to _also update the port number in the client_ environment file.
+> In `client/.env`:
+>
+> ```env
+> NEXT_PUBLIC_API_URL=http://localhost:YOUR_PORT_NUMBER/api/v1
+> ```
