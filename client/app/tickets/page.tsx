@@ -11,6 +11,8 @@ import Dropdown from "@/components/ui/dropdown";
 import { ArrowsUpDownIcon, FilterIcon } from "@/components/ui/icons";
 import useWindow, { isMobile } from "@/lib/hooks/use-window";
 import { FilterKey, OrderKey, useTickets } from "@/lib/hooks/queries/use-tickets";
+import Button from "@/components/ui/button";
+import TicketCreateModal from "@/components/tickets/ticket-create-modal";
 
 export default function TicketsPage() {
   const searchParams = useSearchParams();
@@ -22,6 +24,7 @@ export default function TicketsPage() {
   const { data: tickets, error: ticketsError, refetch: refetchTickets } = useTickets({ query: searchValue, filter, order });
 
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [isCreatingTicket, setIsCreatingTicket] = useState(false);
   const { width: windowWidth } = useWindow();
 
   const didSelectFilter = filter !== "Last Modified";
@@ -62,29 +65,30 @@ export default function TicketsPage() {
             selectedTicket && isMobile(windowWidth!) && "hidden"
           }`}
         >
-          {/* Search and Filters */}
-          <div className="flex w-full gap-2 items-center p-4">
-            <SearchBar className="w-[100%] lg:w-[50%]" placeholder="Search tickets..." onSubmit={setSearchValue} />
+          {/* Top Controls Row */}
+          <div className="flex flex-wrap lg:flex-nowrap gap-2 items-center p-4 w-full">
+            {/* Search Bar */}
+            <div className="flex-grow min-w-[200px]">
+              <SearchBar className="w-full" placeholder="Search tickets..." onSubmit={setSearchValue} />
+            </div>
 
-            {/* Filter Controls for Desktop (controls hidden when ticket selected and screen size is small) */}
-            <div className={`${selectedTicket && isMobile(windowWidth!) ? "" : "hidden"} lg:flex gap-2 items-center`}>
+            {/* Filter Controls */}
+            <div className="flex gap-2 items-center">
               <FilterControls />
+            </div>
+
+            {/* Create Ticket Button */}
+            <div className="ml-auto">
+              <TicketCreateModal />
             </div>
           </div>
 
-          {/* Filter Controls for Mobile (controls hidden on larger screen sizes) */}
-          <div className={`px-4 pb-4 flex lg:hidden gap-2 items-center`}>
-            <FilterControls />
-          </div>
-
           {/* Error Banner */}
-          <div className="w-full">
-            {ticketsError && (
-              <div className="px-4 py-2 bg-red-400 flex gap-3 items-center text-white shadow-md transition-all duration-300 ease-in-out">
-                <p>{ticketsError.message}</p>
-              </div>
-            )}
-          </div>
+          {ticketsError && (
+            <div className="px-4 py-2 bg-red-400 flex gap-3 items-center text-white shadow-md transition-all duration-300 ease-in-out">
+              <p>{ticketsError.message}</p>
+            </div>
+          )}
 
           {/* Tickets Table */}
           {tickets && <TicketsTable tickets={tickets} onClick={(ticket) => setSelectedTicket(ticket)} />}
