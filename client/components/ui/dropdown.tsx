@@ -5,7 +5,7 @@ import { CheckIcon } from "./icons";
 
 export interface DropdownProps {
   className?: string;
-  value: string[] | string;
+  value?: string[] | string;
   opts: string[];
   onSelect: (event: MouseEvent<HTMLElement>, opt: string) => void;
   children: ReactNode;
@@ -27,12 +27,15 @@ export default function Dropdown({ className, value, opts, onSelect, children }:
   const handleBlur = () => setTimeout(() => setIsExpanded(false), 300);
 
   const isSelected = (opt: string) => {
-    if (typeof value === "string") {
-      return (value as string) === opt;
-    }
+    if (!value) return false;
 
-    // The only other possible type value can be is string[]
-    return (value as string[]).includes(opt);
+    switch (typeof value) {
+      case "string":
+        return (value as string) === opt;
+      default:
+        // The only other possible type 'value' can be is string[]
+        return (value as string[]).includes(opt);
+    }
   };
 
   return (

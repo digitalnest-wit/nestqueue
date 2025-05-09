@@ -7,7 +7,8 @@ import TicketAssignedTo from "./ticket-assigned-to";
 import Dropdown from "../ui/dropdown";
 import { MouseEvent, useEffect, useState } from "react";
 import Link from "next/link";
-import { useTicket } from "@/lib/hooks/use-tickets";
+import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
+import TicketEdit from "./ticket-edit";
 
 export interface TicketDetailProps {
   ticketId: string;
@@ -16,8 +17,10 @@ export interface TicketDetailProps {
 }
 
 export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDetailProps) {
-  const { ticket, updateTicket } = useTicket(ticketId);
+  const { data: ticket } = useTicket(ticketId);
+  const { mutate: updateTicket } = useUpdateTicket();
   const [status, setStatus] = useState<Status>("Active");
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     if (ticket) {
@@ -26,14 +29,36 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
   }, [ticket]);
 
   if (!ticket) {
-    return (
-      <div className="flex items-center justify-center gap-5 h-[100vh]">
-        <span className="text-red-500 font-bold text-2xl">404</span>
-        <div>
-          <p className="font-bold text-xl">Not Found</p>
-          <p>We couldn't find a ticket with that matching ID.</p>
+    let layout = <></>;
+
+    // Show not found error after 1 sec
+    setTimeout(() => {
+      layout = (
+        <div className="flex items-center justify-center gap-5 h-[100vh]">
+          <span className="text-red-500 font-bold text-2xl">404</span>
+          <div>
+            <p className="font-bold text-xl">Not Found</p>
+            <p>We couldn't find a ticket with that matching ID.</p>
+          </div>
         </div>
-      </div>
+      );
+    }, 1 * 1000);
+
+    return layout;
+  }
+
+  // If in editing mode, render the TicketEdit component
+  if (isEditing) {
+    return (
+      <TicketEdit
+        ticketId={ticketId}
+        onCancel={() => setIsEditing(false)}
+        onSave={(updates) => {
+          setIsEditing(false);
+          updateTicket({ id: ticketId, updates });
+          setTimeout(onUpdate, 300);
+        }}
+      />
     );
   }
 
@@ -58,20 +83,25 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
     Rejected: "bg-red-500 hover:text-red-500",
   };
 
-  const handleOptSelect = (_event: MouseEvent<HTMLElement>, selectedOpt: string) => {
+  const handleStatusSelection = (_event: MouseEvent<HTMLElement>, selectedOpt: string) => {
     // Type cast should never fail
     const updatedStatus = selectedOpt as Status;
 
     setStatus(updatedStatus);
-    updateTicket({ status: updatedStatus });
+    updateTicket({ id: ticketId, updates: { status: updatedStatus } });
     setTimeout(onUpdate, 300);
   };
 
   return (
     <div className="p-4 bg-gray-50">
-      <Button className="bg-gray-900 hover:bg-gray-700 rounded" onClick={onDismiss}>
-        &lt;- Back
-      </Button>
+      <div className="flex justify-between">
+        <Button className="bg-gray-900 hover:bg-gray-700 text-white rounded" onClick={onDismiss}>
+          &lt;- Back
+        </Button>
+        <Button className="bg-gray-200 hover:bg-gray-300 text-gray-600 rounded" onClick={() => setIsEditing(true)}>
+          <p>Edit</p>
+        </Button>
+      </div>
 
       <p className="mt-3 mb-1 text-sm text-gray-600">TK {ticket.id}</p>
 
@@ -80,11 +110,11 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
           className={`${statusColor[ticket.status]} text-white hover:bg-gray-100`}
           value={status}
           opts={statusOpts}
-          onSelect={handleOptSelect}
+          onSelect={handleStatusSelection}
         >
           <p className={`font-bold`}>{ticket.status}</p>
         </Dropdown>
-        <p className="text-xl">{ticket.title}</p>
+        <p className="text-xl font-bold">{ticket.title}</p>
       </div>
 
       <p className="my-4">{ticket.description}</p>
