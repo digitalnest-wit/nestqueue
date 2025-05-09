@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import Ticket, { Category, Site, Status } from "@/lib/types/ticket";
+import Ticket, { Category, Priority, Site, Status } from "@/lib/types/ticket";
 import Button from "../ui/button";
 import { BuildingOfficeIcon, PersonIcon, TagIcon } from "../ui/icons";
 import { useCreateTicket } from "@/lib/hooks/queries/use-tickets";
@@ -27,13 +27,25 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
   const statusOptions: Status[] = ["Active", "Open", "Closed", "Rejected"];
   const siteOptions: Site[] = ["Gilroy", "HQ", "Modesto", "Salinas", "Stockton", "Watsonville"];
   const categoryOptions: Category[] = ["Hardware", "Network", "Software"];
+  const priorityOptions: Priority[] = [5, 4, 3, 2, 1];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => {
+      const changes = { ...prev };
+
+      if (name === "priority") {
+        return {
+          ...changes,
+          priority: parseInt(value) as Priority,
+        };
+      }
+
+      return {
+        ...changes,
+        [name]: value,
+      };
+    });
   };
 
   const handleSubmit = (e: FormEvent) => {
@@ -75,6 +87,23 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
             {statusOptions.map((status) => (
               <option key={status} value={status}>
                 {status}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+          <select
+            name="priority"
+            value={formData.priority}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          >
+            {priorityOptions.map((priority) => (
+              <option key={priority} value={priority}>
+                {priority}
               </option>
             ))}
           </select>
