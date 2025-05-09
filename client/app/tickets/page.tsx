@@ -10,15 +10,17 @@ import { SearchBar } from "@/components/ui/search-bar";
 import Dropdown from "@/components/ui/dropdown";
 import { ArrowsUpDownIcon, FilterIcon } from "@/components/ui/icons";
 import useWindow, { isMobile } from "@/lib/hooks/use-window";
-import { FilterKey, OrderKey, useTickets } from "@/lib/hooks/use-tickets";
+import { FilterKey, OrderKey, useTickets } from "@/lib/hooks/queries/use-tickets";
 
 export default function TicketsPage() {
   const searchParams = useSearchParams();
   const query = searchParams?.get("q") || "";
   const [searchValue, setSearchValue] = useState(query);
+
   const [filter, setFilter] = useState<FilterKey>("Last Modified");
   const [order, setOrder] = useState<OrderKey>("Descending");
-  const { tickets, error, refreshTickets } = useTickets({ query: searchValue, filter, order });
+  const { data: tickets, error: ticketsError, refetch: refetchTickets } = useTickets({ query: searchValue, filter, order });
+
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const { width: windowWidth } = useWindow();
 
@@ -77,21 +79,21 @@ export default function TicketsPage() {
 
           {/* Error Banner */}
           <div className="w-full">
-            {error && (
+            {ticketsError && (
               <div className="px-4 py-2 bg-red-400 flex gap-3 items-center text-white shadow-md transition-all duration-300 ease-in-out">
-                <p>{error.message}</p>
+                <p>{ticketsError.message}</p>
               </div>
             )}
           </div>
 
           {/* Tickets Table */}
-          <TicketsTable tickets={tickets} onClick={(ticket) => setSelectedTicket(ticket)} />
+          {tickets && <TicketsTable tickets={tickets} onClick={(ticket) => setSelectedTicket(ticket)} />}
         </div>
 
         {/* Selected Ticket */}
         {selectedTicket && (
           <div className="block w-full h-full lg:w-1/3 md:w-1/2 border-l border-gray-200 overflow-y-auto bg-gray-50 shadow-md transition-all duration-300 ease-in-out">
-            <TicketDetail ticketId={selectedTicket.id} onDismiss={() => setSelectedTicket(null)} onUpdate={refreshTickets} />
+            <TicketDetail ticketId={selectedTicket.id} onDismiss={() => setSelectedTicket(null)} onUpdate={refetchTickets} />
           </div>
         )}
       </div>

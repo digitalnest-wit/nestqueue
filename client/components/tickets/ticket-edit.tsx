@@ -4,7 +4,7 @@ import Ticket, { Category, Site, Status } from "@/lib/types/ticket";
 import Button from "../ui/button";
 import { BuildingOfficeIcon, PersonIcon, TagIcon } from "../ui/icons";
 import { FormEvent, useState } from "react";
-import { useTicket } from "@/lib/hooks/use-tickets";
+import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
 
 export interface TicketEditProps {
   ticketId: string;
@@ -13,7 +13,9 @@ export interface TicketEditProps {
 }
 
 export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditProps) {
-  const { ticket, updateTicket } = useTicket(ticketId);
+  const { data: ticket } = useTicket(ticketId);
+  const { mutate: updateTicket } = useUpdateTicket();
+
   const [formData, setFormData] = useState<Partial<Ticket>>(ticket || {});
   const [isSaving, setIsSaving] = useState(false);
 
@@ -42,7 +44,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
     setIsSaving(true);
 
     try {
-      await updateTicket(formData);
+      updateTicket({ id: ticketId, updates: formData });
       onSave(formData);
     } catch (error) {
       console.error("Error updating ticket:", error);

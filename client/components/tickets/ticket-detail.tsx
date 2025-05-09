@@ -2,12 +2,12 @@
 
 import { Status } from "@/lib/types/ticket";
 import Button from "../ui/button";
-import { BuildingOfficeIcon, CalendarIcon, EllipsesIcon, PersonIcon, TagIcon } from "../ui/icons";
+import { BuildingOfficeIcon, CalendarIcon, PersonIcon, TagIcon } from "../ui/icons";
 import TicketAssignedTo from "./ticket-assigned-to";
 import Dropdown from "../ui/dropdown";
 import { MouseEvent, useEffect, useState } from "react";
 import Link from "next/link";
-import { useTicket } from "@/lib/hooks/use-tickets";
+import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
 import TicketEdit from "./ticket-edit";
 
 export interface TicketDetailProps {
@@ -17,7 +17,8 @@ export interface TicketDetailProps {
 }
 
 export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDetailProps) {
-  const { ticket, updateTicket } = useTicket(ticketId);
+  const { data: ticket } = useTicket(ticketId);
+  const { mutate: updateTicket } = useUpdateTicket();
   const [status, setStatus] = useState<Status>("Active");
   const [isEditing, setIsEditing] = useState(false);
 
@@ -28,15 +29,22 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
   }, [ticket]);
 
   if (!ticket) {
-    return (
-      <div className="flex items-center justify-center gap-5 h-[100vh]">
-        <span className="text-red-500 font-bold text-2xl">404</span>
-        <div>
-          <p className="font-bold text-xl">Not Found</p>
-          <p>We couldn't find a ticket with that matching ID.</p>
+    let layout = <></>;
+
+    // Show not found error after 1 sec
+    setTimeout(() => {
+      layout = (
+        <div className="flex items-center justify-center gap-5 h-[100vh]">
+          <span className="text-red-500 font-bold text-2xl">404</span>
+          <div>
+            <p className="font-bold text-xl">Not Found</p>
+            <p>We couldn't find a ticket with that matching ID.</p>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }, 1 * 1000);
+
+    return layout;
   }
 
   // If in editing mode, render the TicketEdit component
@@ -47,7 +55,7 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
         onCancel={() => setIsEditing(false)}
         onSave={(updates) => {
           setIsEditing(false);
-          updateTicket(updates);
+          updateTicket({ id: ticketId, updates });
           setTimeout(onUpdate, 300);
         }}
       />
@@ -80,7 +88,7 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
     const updatedStatus = selectedOpt as Status;
 
     setStatus(updatedStatus);
-    updateTicket({ status: updatedStatus });
+    updateTicket({ id: ticketId, updates: { status: updatedStatus } });
     setTimeout(onUpdate, 300);
   };
 
