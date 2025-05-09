@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Ticket from "../types/ticket";
-import { createTicket, deleteTicket, getTicket, getTickets, NewTicket, TicketUpdates, updateTicket } from "../api/tickets";
+import { createTicket, deleteTicket, getTicket, getTickets, NewTicket, updateTicket } from "../api/tickets";
 
 export type FilterKey = "Priority" | "Category" | "Title" | "Assigned To" | "Status" | "Last Modified";
 export type OrderKey = "Ascending" | "Descending";
@@ -72,7 +72,7 @@ export function useTickets({ query, filter = "Last Modified", order = "Descendin
     }
   };
 
-  const editTicket = async (id: string, updates: TicketUpdates): Promise<Ticket | undefined> => {
+  const editTicket = async (id: string, updates: Partial<Ticket>): Promise<Ticket | undefined> => {
     try {
       setIsLoading(true);
 
@@ -196,7 +196,7 @@ export function useTicket(id: string) {
     if (id) fetchTicket();
   }, [id]);
 
-  const updateCurrentTicket = async (updates: TicketUpdates): Promise<Ticket | undefined> => {
+  const updateCurrentTicket = async (updates: Partial<Ticket>): Promise<Ticket | undefined> => {
     if (!id) return;
 
     try {

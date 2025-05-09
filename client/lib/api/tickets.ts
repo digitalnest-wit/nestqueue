@@ -36,17 +36,7 @@ export async function createTicket(ticket: NewTicket): Promise<AxiosResponse<Tic
   return await server.post(`/tickets`, ticket);
 }
 
-export interface TicketUpdates {
-  title?: string;
-  description?: string;
-  site?: Site;
-  category?: Category;
-  assignedTo?: string;
-  priority?: Priority;
-  status?: Status;
-}
-
-export async function updateTicket(id: string, updates: TicketUpdates): Promise<AxiosResponse<Ticket>> {
+export async function updateTicket(id: string, updates: Partial<Ticket>): Promise<AxiosResponse<Ticket>> {
   return await server.put(`/tickets/${id}`, updates);
 }
 
