@@ -20,15 +20,22 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
   const [isSaving, setIsSaving] = useState(false);
 
   if (!ticket) {
-    return (
-      <div className="flex items-center justify-center gap-5 h-full">
-        <span className="text-red-500 font-bold text-2xl">404</span>
-        <div>
-          <p className="font-bold text-xl">Not Found</p>
-          <p>We couldn't find a ticket with that matching ID.</p>
+    let layout = <></>;
+
+    // Show not found error after 1 sec
+    setTimeout(() => {
+      layout = (
+        <div className="flex items-center justify-center gap-5 h-[100vh]">
+          <span className="text-red-500 font-bold text-2xl">404</span>
+          <div>
+            <p className="font-bold text-xl">Not Found</p>
+            <p>We couldn't find a ticket with that matching ID.</p>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }, 1 * 1000);
+
+    return layout;
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
