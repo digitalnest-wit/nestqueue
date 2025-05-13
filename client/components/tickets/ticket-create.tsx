@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import Ticket, { Category, Priority, Site, Status } from "@/lib/types/ticket";
+import Ticket, { allCategories, allPriorities, allSites, allStatuses, Category, Priority, Site, Status } from "@/lib/types/ticket";
 import Button from "../ui/button";
 import { BuildingOfficeIcon, PersonIcon, TagIcon } from "../ui/icons";
 import { useCreateTicket } from "@/lib/hooks/queries/use-tickets";
@@ -23,11 +23,6 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
   });
 
   const [isSaving, setIsSaving] = useState(false);
-
-  const statusOptions: Status[] = ["Active", "Open", "Closed", "Rejected"];
-  const siteOptions: Site[] = ["Gilroy", "HQ", "Modesto", "Salinas", "Stockton", "Watsonville"];
-  const categoryOptions: Category[] = ["Hardware", "Network", "Software"];
-  const priorityOptions: Priority[] = [5, 4, 3, 2, 1];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -84,7 +79,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded-md"
           >
-            {statusOptions.map((status) => (
+            {allStatuses.map((status) => (
               <option key={status} value={status}>
                 {status}
               </option>
@@ -101,7 +96,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
             className="w-full p-2 border border-gray-300 rounded-md"
             required
           >
-            {priorityOptions.map((priority) => (
+            {allPriorities.map((priority) => (
               <option key={priority} value={priority}>
                 {priority}
               </option>
@@ -154,7 +149,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               <BuildingOfficeIcon label="Site" className="mr-1" />
             </label>
             <select name="site" value={formData.site} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
-              {siteOptions.map((site) => (
+              {allSites.map((site) => (
                 <option key={site} value={site}>
                   {site}
                 </option>
@@ -172,7 +167,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-md"
             >
-              {categoryOptions.map((category) => (
+              {allCategories.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>
