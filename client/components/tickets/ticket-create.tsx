@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import Ticket, { allCategories, allPriorities, allSites, allStatuses, Category, Priority, Site, Status } from "@/lib/types/ticket";
+import Ticket, { allCategories, allPriorities, allSites, allStatuses, Priority } from "@/lib/types/ticket";
 import Button from "../ui/button";
 import { BuildingOfficeIcon, PersonIcon, TagIcon } from "../ui/icons";
 import { useCreateTicket } from "@/lib/hooks/queries/use-tickets";

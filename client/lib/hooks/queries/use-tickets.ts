@@ -14,6 +14,7 @@ interface UseTicketsProps {
 export const useTickets = ({ query, filter = "Last Modified", order = "Descending" }: UseTicketsProps) =>
   useQuery({
     queryKey: ["tickets", query, filter, order],
+    retry: 0,
     queryFn: () => getTickets(query),
     select: (data) => sortTickets(data, ticketKeys[filter], order),
   });

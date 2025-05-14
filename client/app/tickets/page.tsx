@@ -11,8 +11,8 @@ import Dropdown from "@/components/ui/dropdown";
 import { ArrowsUpDownIcon, FilterIcon } from "@/components/ui/icons";
 import useWindow, { isMobile } from "@/lib/hooks/use-window";
 import { FilterKey, OrderKey, useTickets } from "@/lib/hooks/queries/use-tickets";
-import Button from "@/components/ui/button";
 import TicketCreateModal from "@/components/tickets/ticket-create-modal";
+import { isAxiosError } from "axios";
 
 export default function TicketsPage() {
   const searchParams = useSearchParams();
@@ -24,7 +24,6 @@ export default function TicketsPage() {
   const { data: tickets, error: ticketsError, refetch: refetchTickets } = useTickets({ query: searchValue, filter, order });
 
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [isCreatingTicket, setIsCreatingTicket] = useState(false);
   const { width: windowWidth } = useWindow();
 
   const didSelectFilter = filter !== "Last Modified";
@@ -56,6 +55,26 @@ export default function TicketsPage() {
     );
   };
 
+  const ErrorMessage = () => {
+    if (ticketsError) {
+      if (isAxiosError(ticketsError) && ticketsError.status === 404) {
+        return (
+          <div className="px-4 py-2 bg-gray-100 flex gap-3 items-center text-black shadow-md transition-all duration-300 ease-in-out">
+            <p>No tickets were found for query '{searchValue}'. Please try another.</p>
+          </div>
+        );
+      }
+
+      return (
+        <div className="px-4 py-2 bg-red-500 flex gap-3 items-center text-white shadow-md transition-all duration-300 ease-in-out">
+          <p>{ticketsError.message}</p>
+        </div>
+      );
+    }
+
+    return <></>;
+  };
+
   return (
     <div className="w-full">
       {/* Main Content Area */}
@@ -84,11 +103,7 @@ export default function TicketsPage() {
           </div>
 
           {/* Error Banner */}
-          {ticketsError && (
-            <div className="px-4 py-2 bg-red-400 flex gap-3 items-center text-white shadow-md transition-all duration-300 ease-in-out">
-              <p>{ticketsError.message}</p>
-            </div>
-          )}
+          <ErrorMessage />
 
           {/* Tickets Table */}
           {tickets && <TicketsTable tickets={tickets} onClick={(ticket) => setSelectedTicket(ticket)} />}

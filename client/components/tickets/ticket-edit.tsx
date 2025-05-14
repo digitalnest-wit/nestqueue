@@ -1,6 +1,6 @@
 "use client";
 
-import Ticket, { allCategories, allPriorities, allSites, allStatuses, Category, Priority, Site, Status } from "@/lib/types/ticket";
+import Ticket, { allCategories, allPriorities, allSites, allStatuses, Priority } from "@/lib/types/ticket";
 import Button from "../ui/button";
 import { BuildingOfficeIcon, PersonIcon, TagIcon } from "../ui/icons";
 import { FormEvent, useState } from "react";
