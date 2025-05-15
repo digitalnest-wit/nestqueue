@@ -5,6 +5,7 @@ import Ticket, { allCategories, allPriorities, allSites, allStatuses, Priority }
 import Button from "../ui/button";
 import { BuildingOfficeIcon, PersonIcon, TagIcon } from "../ui/icons";
 import { useCreateTicket } from "@/lib/hooks/queries/use-tickets";
+import { useToast } from "@/lib/hooks/use-toast";
 
 export interface TicketCreateProps {
   onCancel: () => void;
@@ -12,6 +13,7 @@ export interface TicketCreateProps {
 }
 
 export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) {
+  const { addToast } = useToast();
   const { mutate: createTicket } = useCreateTicket();
   const [formData, setFormData] = useState<Partial<Ticket>>({
     status: "Open",
@@ -50,16 +52,16 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
     setIsSaving(true);
 
     try {
-      createTicket(formData as Ticket, {
-        onSuccess: (created) => {
-          onCreate(created);
+      createTicket(formData, {
+        onSuccess: (ticket) => {
+          onCreate(ticket);
+          addToast("New ticket created successfully!", "Success", 3500);
         },
         onError: (err) => {
           console.error("Error creating ticket:", err);
+          addToast("An unexpected error occurred. Please try again.", "Error", 5000);
         },
-        onSettled: () => {
-          setIsSaving(false);
-        },
+        onSettled: () => setIsSaving(false),
       });
     } catch (error) {
       console.error("Unexpected error:", error);

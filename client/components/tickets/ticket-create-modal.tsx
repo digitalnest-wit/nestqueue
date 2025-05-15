@@ -4,6 +4,7 @@ import Modal from "../ui/modal";
 import TicketCreate from "./ticket-create";
 import Button from "../ui/button";
 import { PlusIcon } from "../ui/icons";
+import { useToast } from "@/lib/hooks/use-toast";
 
 export default function TicketCreateModal() {
   const [isOpen, setIsOpen] = useState(false);

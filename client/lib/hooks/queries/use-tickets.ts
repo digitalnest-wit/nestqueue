@@ -30,9 +30,7 @@ export const useCreateTicket = () => {
 
   return useMutation<Ticket, Error, Partial<Ticket>>({
     mutationFn: (ticket) => createTicket(ticket),
-    onSuccess: () => {
-      client.invalidateQueries({ queryKey: ["tickets"] });
-    },
+    onSuccess: () => client.invalidateQueries({ queryKey: ["tickets"] }),
   });
 };
 

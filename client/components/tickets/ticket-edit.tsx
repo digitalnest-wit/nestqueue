@@ -5,6 +5,7 @@ import Button from "../ui/button";
 import { BuildingOfficeIcon, PersonIcon, TagIcon } from "../ui/icons";
 import { FormEvent, useState } from "react";
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
+import { useToast } from "@/lib/hooks/use-toast";
 
 export interface TicketEditProps {
   ticketId: string;
@@ -13,6 +14,7 @@ export interface TicketEditProps {
 }
 
 export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditProps) {
+  const { addToast } = useToast();
   const { data: ticket } = useTicket(ticketId);
   const { mutate: updateTicket } = useUpdateTicket();
 
@@ -64,8 +66,10 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
     try {
       updateTicket({ id: ticketId, updates: formData });
       onSave(formData);
+      addToast("Ticket updated successfully.", "Info", 2500);
     } catch (error) {
       console.error("Error updating ticket:", error);
+      addToast("An unexpected error occurred. Please try again.", "Error", 5000);
     } finally {
       setIsSaving(false);
     }
