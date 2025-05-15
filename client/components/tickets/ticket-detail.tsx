@@ -2,7 +2,7 @@
 
 import { Status } from "@/lib/types/ticket";
 import Button from "../ui/button";
-import { BuildingOfficeIcon, CalendarIcon, PersonIcon, TagIcon } from "../ui/icons";
+import { ArrowTopRightSquareIcon, BuildingOfficeIcon, CalendarIcon, PencilSquareIcon, PersonIcon, TagIcon } from "../ui/icons";
 import TicketAssignedTo from "./ticket-assigned-to";
 import Dropdown from "../ui/dropdown";
 import { MouseEvent, useEffect, useState } from "react";
@@ -68,7 +68,7 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
   const TicketCreatedBy = ({ createdBy }: { createdBy: string }) => {
     return (
       <Link className="underline hover:text-blue-500" href={`https://mail.google.com/mail/?view=cm&fs=1&to=${createdBy}`}>
-        {createdBy}
+        <ArrowTopRightSquareIcon label={createdBy} />
       </Link>
     );
   };
@@ -77,10 +77,10 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
   const statusOpts = ["Active", "Open", "Closed", "Rejected"];
 
   const statusColor: Record<Status, string> = {
-    Open: "bg-green-500 hover:text-green-500",
-    Active: "bg-blue-500 hover:text-blue-500",
-    Closed: "bg-gray-500 hover:text-gray-500",
-    Rejected: "bg-red-500 hover:text-red-500",
+    Open: "bg-green-500 dark:bg-green-400 hover:text-green-500 dark:hover:text-green-400",
+    Active: "bg-blue-500 dark:bg-blue-400 hover:text-blue-500 dark:hover:text-blue-400",
+    Closed: "bg-gray-500 dark:bg-gray-400 hover:text-gray-500 dark:hover:text-gray-400",
+    Rejected: "bg-red-500 dark:bg-red-400 hover:text-red-500 dark:hover:text-red-400",
   };
 
   const handleStatusSelection = (_event: MouseEvent<HTMLElement>, selectedOpt: string) => {
@@ -93,34 +93,47 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
   };
 
   return (
-    <div className="p-4 bg-gray-50">
+    <div className="p-4 bg-gray-50 dark:bg-gray-800">
       <div className="flex justify-between">
-        <Button className="bg-gray-900 hover:bg-gray-700 text-white rounded" onClick={onDismiss}>
-          &lt;- Back
+        {/* Dismiss button */}
+        <Button
+          className="px-2 bg-gray-900 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-600 text-white rounded"
+          onClick={onDismiss}
+        >
+          &lt;-
         </Button>
-        <Button className="bg-gray-200 hover:bg-gray-300 text-gray-600 rounded" onClick={() => setIsEditing(true)}>
-          <p>Edit</p>
+        {/* Edit button */}
+        <Button
+          className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-white rounded"
+          onClick={() => setIsEditing(true)}
+        >
+          <PencilSquareIcon label="Edit" />
         </Button>
       </div>
 
-      <p className="mt-3 mb-1 text-sm text-gray-600">TK {ticket.id}</p>
+      {/* Ticket ID */}
+      <p className="mt-3 mb-1 text-sm text-gray-600 dark:text-gray-500">TK {ticket.id}</p>
 
       <div className="flex gap-5 items-center">
+        {/* Ticket status */}
         <Dropdown
-          className={`${statusColor[ticket.status]} text-white hover:bg-gray-100`}
+          className={`${statusColor[ticket.status]} text-white dark:text-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700`}
           value={status}
           opts={statusOpts}
           onSelect={handleStatusSelection}
         >
           <p className={`font-bold`}>{ticket.status}</p>
         </Dropdown>
+        {/* Titcket title */}
         <p className="text-xl font-bold">{ticket.title}</p>
       </div>
 
+      {/* Ticket description */}
       <p className="my-4">{ticket.description}</p>
 
       <table className="table-auto min-w-full">
         <tbody>
+          {/* Ticket assigned to */}
           <tr>
             <td className={commonStyles}>
               <PersonIcon label="Assigned To" />
@@ -129,18 +142,21 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
               <TicketAssignedTo assignedTo={ticket.assignedTo} />
             </td>
           </tr>
+          {/* Ticket site */}
           <tr>
             <td className={commonStyles}>
               <BuildingOfficeIcon label="Site" />
             </td>
             <td>{ticket.site}</td>
           </tr>
+          {/* Ticket category */}
           <tr>
             <td className={commonStyles}>
               <TagIcon label="Category" />
             </td>
             <td>{ticket.category}</td>
           </tr>
+          {/* Ticket created by */}
           <tr>
             <td className={commonStyles}>
               <PersonIcon label="Created By" />
@@ -149,12 +165,14 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
               <TicketCreatedBy createdBy={ticket.createdBy} />
             </td>
           </tr>
+          {/* Ticket created at */}
           <tr>
             <td className={commonStyles}>
               <CalendarIcon label="Created On" />
             </td>
             <td>{ticketCreatedAt}</td>
           </tr>
+          {/* Ticket updated at */}
           <tr>
             <td className={commonStyles}>
               <CalendarIcon label="Last Modified" />

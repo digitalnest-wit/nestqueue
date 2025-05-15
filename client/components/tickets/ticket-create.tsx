@@ -66,18 +66,18 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
   };
 
   return (
-    <div className="p-4 bg-gray-50">
+    <div className="p-4 bg-gray-50 dark:bg-gray-900">
       <h2 className="text-xl font-bold mb-4">Create Ticket</h2>
 
       <form onSubmit={handleSubmit}>
         {/* Status */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
           <select
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
           >
             {allStatuses.map((status) => (
               <option key={status} value={status}>
@@ -87,13 +87,14 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
           </select>
         </div>
 
+        {/* Priority */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
           <select
             name="priority"
             value={formData.priority}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
             required
           >
             {allPriorities.map((priority) => (
@@ -106,33 +107,33 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
 
         {/* Title */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
             required
           />
         </div>
 
         {/* Description */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
             rows={4}
           />
         </div>
 
-        {/* Assigned To, Site, Category */}
+        {/* Assigned To */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               <PersonIcon label="Assigned To" className="mr-1" />
             </label>
             <input
@@ -140,15 +141,21 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               name="assignedTo"
               value={formData.assignedTo}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
             />
           </div>
 
+          {/* Site */}
           <div>
-            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               <BuildingOfficeIcon label="Site" className="mr-1" />
             </label>
-            <select name="site" value={formData.site} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
+            <select
+              name="site"
+              value={formData.site}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
+            >
               {allSites.map((site) => (
                 <option key={site} value={site}>
                   {site}
@@ -157,15 +164,16 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
             </select>
           </div>
 
+          {/* Category */}
           <div>
-            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               <TagIcon label="Category" className="mr-1" />
             </label>
             <select
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
             >
               {allCategories.map((category) => (
                 <option key={category} value={category}>
@@ -176,12 +184,20 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
           </div>
         </div>
 
-        {/* Buttons */}
+        {/* Cancel & Save Buttons */}
         <div className="mt-6 flex justify-end gap-3">
-          <Button type="button" className="bg-gray-200 hover:bg-gray-300 text-gray-600 rounded" onClick={onCancel}>
+          <Button
+            type="button"
+            className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-300 rounded"
+            onClick={onCancel}
+          >
             Cancel
           </Button>
-          <Button type="submit" className="bg-gray-800 hover:bg-gray-700 text-white rounded" disabled={isSaving}>
+          <Button
+            type="submit"
+            className="bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-800 text-white rounded"
+            disabled={isSaving}
+          >
             {isSaving ? "Creating..." : "Create Ticket"}
           </Button>
         </div>

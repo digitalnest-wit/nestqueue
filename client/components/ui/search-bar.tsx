@@ -25,7 +25,7 @@ export function SearchBar({ className, placeholder, onSubmit }: SearchBarProps) 
 
   return (
     <input
-      className={`border border-gray-200 p-1 px-2 rounded ${className}`}
+      className={`border border-gray-200 dark:border-gray-700 dark:bg-gray-700 placeholder:text-gray-500 dark:placeholder:text-gray-300 p-1 px-2 rounded ${className}`}
       type="search"
       placeholder={placeholder}
       value={value}

@@ -71,26 +71,28 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
     }
   };
 
+  const commonLabelStyle = "text-sm font-medium mb-1";
+  const commonSelectStyle = "w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md";
+
   return (
-    <div className="p-4 bg-gray-50">
+    <div className="p-4 bg-gray-50 dark:bg-gray-800">
       <div className="flex justify-between mb-4">
         <h2 className="text-xl font-bold">Edit Ticket</h2>
-        <Button className="bg-gray-200 hover:bg-gray-300 text-gray-600 rounded" onClick={onCancel}>
-          Cancel
+        <Button
+          className="px-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-white rounded"
+          onClick={onCancel}
+        >
+          &lt;-
         </Button>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <p className="mt-3 mb-1 text-sm text-gray-600">TK {ticket.id}</p>
+        <p className="mb-2 text-sm text-gray-600 dark:text-gray-500">TK {ticket.id}</p>
 
+        {/* Ticket status */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-          <select
-            name="status"
-            value={formData.status || ticket.status}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          >
+          <label className={`block ${commonLabelStyle}`}>Status</label>
+          <select name="status" value={formData.status || ticket.status} onChange={handleChange} className={commonSelectStyle}>
             {allStatuses.map((status) => (
               <option key={status} value={status}>
                 {status}
@@ -99,13 +101,14 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
           </select>
         </div>
 
+        {/* Ticket priority */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+          <label className={`block ${commonLabelStyle}`}>Priority</label>
           <select
             name="priority"
             value={formData.priority || ticket.priority}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className={commonSelectStyle}
             required
           >
             {allPriorities.map((priority) => (
@@ -116,32 +119,35 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
           </select>
         </div>
 
+        {/* Ticket title */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+          <label className={`block ${commonLabelStyle}`}>Title</label>
           <input
             type="text"
             name="title"
             value={formData.title || ticket.title}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className={commonSelectStyle}
             required
           />
         </div>
 
+        {/* Ticket description */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label className={`block ${commonLabelStyle}`}>Description</label>
           <textarea
             name="description"
             value={formData.description || ticket.description}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className={commonSelectStyle}
             rows={4}
           />
         </div>
 
+        {/* Ticket assigned to */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+            <label className={`flex items-center ${commonLabelStyle}`}>
               <PersonIcon label="Assigned To" className="mr-1" />
             </label>
             <input
@@ -149,20 +155,16 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
               name="assignedTo"
               value={formData.assignedTo || ticket.assignedTo}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className={commonSelectStyle}
             />
           </div>
 
+          {/* Ticket site */}
           <div>
-            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+            <label className={`flex items-center ${commonLabelStyle}`}>
               <BuildingOfficeIcon label="Site" className="mr-1" />
             </label>
-            <select
-              name="site"
-              value={formData.site || ticket.site}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            >
+            <select name="site" value={formData.site || ticket.site} onChange={handleChange} className={commonSelectStyle}>
               {allSites.map((site) => (
                 <option key={site} value={site}>
                   {site}
@@ -171,16 +173,12 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
             </select>
           </div>
 
+          {/* Ticket category */}
           <div>
-            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+            <label className={`flex items-center ${commonLabelStyle}`}>
               <TagIcon label="Category" className="mr-1" />
             </label>
-            <select
-              name="category"
-              value={formData.category || ticket.category}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            >
+            <select name="category" value={formData.category || ticket.category} onChange={handleChange} className={commonSelectStyle}>
               {allCategories.map((category) => (
                 <option key={category} value={category}>
                   {category}
@@ -191,11 +189,21 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
         </div>
 
         <div className="mt-6 flex justify-end gap-3">
-          <Button type="button" className="bg-gray-200 hover:bg-gray-300 text-gray-600 rounded" onClick={onCancel}>
+          {/* Cancel button */}
+          <Button
+            type="button"
+            className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-white rounded"
+            onClick={onCancel}
+          >
             Cancel
           </Button>
-          <Button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white rounded" disabled={isSaving}>
-            {isSaving ? "Saving..." : "Save Changes"}
+          {/* Save button */}
+          <Button
+            type="submit"
+            className="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white rounded"
+            disabled={isSaving}
+          >
+            {isSaving ? "Updating..." : "Update Ticket"}
           </Button>
         </div>
       </form>

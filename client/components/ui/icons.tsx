@@ -31,6 +31,26 @@ export function EllipsesIcon({ className, label, onClick }: IconProps) {
   );
 }
 
+export function PlusIcon({ className, label, onClick }: IconProps) {
+  return (
+    <span className={`flex items-center gap-2 ${className}`}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="size-4"
+        onClick={onClick}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+
+      {label && <span>{label}</span>}
+    </span>
+  );
+}
+
 export function ArrowsUpDownIcon({ className, label, onClick }: IconProps) {
   return (
     <span className={`flex items-center gap-2 ${className}`}>
@@ -138,6 +158,32 @@ export function PencilSquareIcon({ className, label, onClick }: IconProps) {
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-4" onClick={onClick}>
         <path d="M13.488 2.513a1.75 1.75 0 0 0-2.475 0L6.75 6.774a2.75 2.75 0 0 0-.596.892l-.848 2.047a.75.75 0 0 0 .98.98l2.047-.848a2.75 2.75 0 0 0 .892-.596l4.261-4.262a1.75 1.75 0 0 0 0-2.474Z" />
         <path d="M4.75 3.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h6.5c.69 0 1.25-.56 1.25-1.25V9A.75.75 0 0 1 14 9v2.25A2.75 2.75 0 0 1 11.25 14h-6.5A2.75 2.75 0 0 1 2 11.25v-6.5A2.75 2.75 0 0 1 4.75 2H7a.75.75 0 0 1 0 1.5H4.75Z" />
+      </svg>
+
+      {label && <span>{label}</span>}
+    </span>
+  );
+}
+
+export function EnvelopeIcon({ className, label, onClick }: IconProps) {
+  return (
+    <span className={`flex items-center gap-2 ${className}`}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-4" onClick={onClick}>
+        <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+        <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+      </svg>
+
+      {label && <span>{label}</span>}
+    </span>
+  );
+}
+
+export function ArrowTopRightSquareIcon({ className, label, onClick }: IconProps) {
+  return (
+    <span className={`flex items-center gap-2 ${className}`}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-4" onClick={onClick}>
+        <path d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72Z" />
+        <path d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5Z" />
       </svg>
 
       {label && <span>{label}</span>}

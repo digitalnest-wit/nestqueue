@@ -33,17 +33,17 @@ export default function TicketsPage() {
     return (
       <>
         <Dropdown
-          className="border border-gray-200 hover:bg-gray-100"
+          className="border border-gray-200 dark:border-gray-700 hover:bg-gray-00 dark:bg-gray-700 dark:hover:bg-gray-600"
           opts={["Priority", "Category", "Title", "Assigned To", "Status", "Last Modified"]}
-          onSelect={(_e, opt) => setFilter(opt as FilterKey)}
+          onSelect={(_, opt) => setFilter(opt as FilterKey)}
           value={filter}
         >
           <FilterIcon className={`p-1 ${didSelectFilter ? "py-1.5" : "py-2"} text-sm`} label={didSelectFilter ? filter : undefined} />
         </Dropdown>
         <Dropdown
-          className="border border-gray-200 hover:bg-gray-100"
+          className="border border-gray-200 dark:border-gray-700 hover:bg-gray-00 dark:bg-gray-700 dark:hover:bg-gray-600"
           opts={["Ascending", "Descending"]}
-          onSelect={(_e, opt) => setOrder(opt as OrderKey)}
+          onSelect={(_, opt) => setOrder(opt as OrderKey)}
           value={order}
         >
           <ArrowsUpDownIcon
@@ -59,7 +59,7 @@ export default function TicketsPage() {
     if (ticketsError) {
       if (isAxiosError(ticketsError) && ticketsError.status === 404) {
         return (
-          <div className="px-4 py-2 bg-gray-100 flex gap-3 items-center text-black shadow-md transition-all duration-300 ease-in-out">
+          <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 dark:text-gray-300 flex gap-3 items-center text-black shadow-md transition-all duration-300 ease-in-out">
             <p>No tickets were found for query '{searchValue}'. Please try another.</p>
           </div>
         );
@@ -111,7 +111,7 @@ export default function TicketsPage() {
 
         {/* Selected Ticket */}
         {selectedTicket && (
-          <div className="block w-full h-full lg:w-1/3 md:w-1/2 border-l border-gray-200 overflow-y-auto bg-gray-50 shadow-md transition-all duration-300 ease-in-out">
+          <div className="block w-full h-full lg:w-1/3 md:w-1/2 border-l border-gray-200 dark:border-gray-900 overflow-y-auto bg-gray-50 dark:bg-gray-800 shadow-md transition-all duration-300 ease-in-out">
             <TicketDetail ticketId={selectedTicket.id} onDismiss={() => setSelectedTicket(null)} onUpdate={refetchTickets} />
           </div>
         )}

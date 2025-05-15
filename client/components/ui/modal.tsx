@@ -11,10 +11,10 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="bg-gray-50 p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+      <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-lg relative">
         <button
           onClick={onClose}
-          className="absolute hover:cursor-pointer top-2 right-2 text-gray-500 hover:text-red-500 text-xl font-bold"
+          className="absolute hover:cursor-pointer top-2 right-2 text-gray-500 dark:text-gray-300 hover:text-red-500 text-xl font-bold"
           aria-label="Close"
         >
           &times;
