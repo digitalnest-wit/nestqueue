@@ -18,6 +18,8 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
     title: "",
     description: "",
     assignedTo: "",
+    priority: 5,
+    createdBy: "techsquad@digitalnest.org",
     site: "Watsonville",
     category: "Hardware",
   });
