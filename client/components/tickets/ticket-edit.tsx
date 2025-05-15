@@ -122,26 +122,13 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
         {/* Ticket title */}
         <div className="mb-4">
           <label className={`block ${commonLabelStyle}`}>Title</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title || ticket.title}
-            onChange={handleChange}
-            className={commonSelectStyle}
-            required
-          />
+          <input type="text" name="title" value={formData.title} onChange={handleChange} className={commonSelectStyle} required />
         </div>
 
         {/* Ticket description */}
         <div className="mb-4">
           <label className={`block ${commonLabelStyle}`}>Description</label>
-          <textarea
-            name="description"
-            value={formData.description || ticket.description}
-            onChange={handleChange}
-            className={commonSelectStyle}
-            rows={4}
-          />
+          <textarea name="description" value={formData.description} onChange={handleChange} className={commonSelectStyle} rows={4} />
         </div>
 
         {/* Ticket assigned to */}
