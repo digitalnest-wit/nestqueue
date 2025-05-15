@@ -10,27 +10,27 @@ export interface TicketsTableRowProps {
 
 export default function TicketTableRow({ ticket, onClick }: TicketsTableRowProps) {
   const ticketUpdatedAt = new Date(ticket.updatedAt).toDateString();
-  const columnStyles = "px-4 py-4 text-left text-gray-700";
+  const columnStyles = "px-4 py-4 text-left text-gray-700 dark:text-gray-300";
 
   let statusStyle: string;
 
   switch (ticket.status) {
     case "Open":
-      statusStyle = "text-green-500";
+      statusStyle = "text-green-500 dark:text-green-400";
       break;
     case "Active":
-      statusStyle = "text-blue-500";
+      statusStyle = "text-blue-500 dark:text-blue-400";
       break;
     case "Closed":
-      statusStyle = "text-gray-500";
+      statusStyle = "text-gray-500 dark:text-gray-400";
       break;
     case "Rejected":
-      statusStyle = "text-red-500";
+      statusStyle = "text-red-500 dark:text-red-400";
       break;
   }
 
   return (
-    <tr className="hover:bg-gray-50" key={ticket.id} onClick={() => onClick(ticket)}>
+    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700" key={ticket.id} onClick={() => onClick(ticket)}>
       <td className={`${columnStyles} font-bold min-w-[5rem]`}>P{ticket.priority}</td>
       <td className={`${columnStyles} font-normal min-w-[5rem] hidden md:block`}>{ticket.category}</td>
       <td className={`${columnStyles} font-normal min-w-[5rem] truncate whitespace-nowrap overflow-hidden`}>{ticket.title}</td>
