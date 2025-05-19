@@ -33,7 +33,7 @@ export default function TicketsPage() {
     return (
       <>
         <Dropdown
-          className="border border-gray-200 dark:border-gray-700 hover:bg-gray-00 dark:bg-gray-700 dark:hover:bg-gray-600"
+          className="border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600"
           opts={["Priority", "Category", "Title", "Assigned To", "Status", "Last Modified"]}
           onSelect={(_, opt) => setFilter(opt as FilterKey)}
           value={filter}
@@ -41,7 +41,7 @@ export default function TicketsPage() {
           <FilterIcon className={`p-1 ${didSelectFilter ? "py-1.5" : "py-2"} text-sm`} label={didSelectFilter ? filter : undefined} />
         </Dropdown>
         <Dropdown
-          className="border border-gray-200 dark:border-gray-700 hover:bg-gray-00 dark:bg-gray-700 dark:hover:bg-gray-600"
+          className="border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600"
           opts={["Ascending", "Descending"]}
           onSelect={(_, opt) => setOrder(opt as OrderKey)}
           value={order}
