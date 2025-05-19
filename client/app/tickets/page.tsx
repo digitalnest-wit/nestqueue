@@ -8,11 +8,12 @@ import TicketDetail from "@/components/tickets/ticket-detail";
 import TicketsTable from "@/components/tickets/tickets-table";
 import { SearchBar } from "@/components/ui/search-bar";
 import Dropdown from "@/components/ui/dropdown";
-import { ArrowsUpDownIcon, FilterIcon } from "@/components/ui/icons";
 import useWindow, { isMobile } from "@/lib/hooks/use-window";
 import { FilterKey, OrderKey, useTickets } from "@/lib/hooks/queries/use-tickets";
 import TicketCreateModal from "@/components/tickets/ticket-create-modal";
 import { isAxiosError } from "axios";
+import LabeledIcon from "@/components/ui/labeled-icon";
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel } from "lucide-react";
 
 export default function TicketsPage() {
   const searchParams = useSearchParams();
@@ -38,7 +39,11 @@ export default function TicketsPage() {
           onSelect={(_, opt) => setFilter(opt as FilterKey)}
           value={filter}
         >
-          <FilterIcon className={`p-1 ${didSelectFilter ? "py-1.5" : "py-2"} text-sm`} label={didSelectFilter ? filter : undefined} />
+          {didSelectFilter ? (
+            <LabeledIcon className="p-1 py-1 text-sm" icon={<Funnel fill="currentColor" className="w-4" />} label={filter} />
+          ) : (
+            <Funnel className="w-4 m-1 inline-block" />
+          )}
         </Dropdown>
         <Dropdown
           className="border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600"
@@ -46,10 +51,11 @@ export default function TicketsPage() {
           onSelect={(_, opt) => setOrder(opt as OrderKey)}
           value={order}
         >
-          <ArrowsUpDownIcon
-            className={`p-1 ${didSelectOrder ? "py-1.5" : "py-2"} text-sm`}
-            label={didSelectOrder ? order : undefined}
-          />
+          {didSelectOrder ? (
+            <LabeledIcon className="p-1 py-1 text-sm" icon={<ArrowDownNarrowWide className="w-4" />} label={order} />
+          ) : (
+            <ArrowDownWideNarrow className="w-4 m-1 inline-block" />
+          )}
         </Dropdown>
       </>
     );

@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Button from "./button";
-import { ThreeHorizontalLinesIcon } from "./icons";
 import Link from "next/link";
 import Image from "next/image";
+import { Menu } from "lucide-react";
 
 export default function NavBar() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -23,7 +23,7 @@ export default function NavBar() {
       </div>
 
       <Button className="block md:hidden" onClick={() => setIsExpanded(!isExpanded)}>
-        <ThreeHorizontalLinesIcon />
+        <Menu />
       </Button>
 
       <div className={`w-full md:flex md:items-center md:w-auto ${isExpanded ? "" : "hidden"}`}>

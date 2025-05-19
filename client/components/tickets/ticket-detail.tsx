@@ -2,13 +2,14 @@
 
 import { Status } from "@/lib/types/ticket";
 import Button from "../ui/button";
-import { ArrowTopRightSquareIcon, BuildingOfficeIcon, CalendarIcon, PencilSquareIcon, PersonIcon, TagIcon } from "../ui/icons";
 import TicketAssignedTo from "./ticket-assigned-to";
 import Dropdown from "../ui/dropdown";
 import { MouseEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
 import TicketEdit from "./ticket-edit";
+import { Building, Calendar, PencilLine, SquareArrowUpRight, Tag, User } from "lucide-react";
+import LabeledIcon from "../ui/labeled-icon";
 
 export interface TicketDetailProps {
   ticketId: string;
@@ -68,7 +69,7 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
   const TicketCreatedBy = ({ createdBy }: { createdBy: string }) => {
     return (
       <Link className="underline hover:text-blue-500" href={`https://mail.google.com/mail/?view=cm&fs=1&to=${createdBy}`}>
-        <ArrowTopRightSquareIcon label={createdBy} />
+        <LabeledIcon icon={<SquareArrowUpRight className="w-4" />} label={createdBy} />
       </Link>
     );
   };
@@ -107,7 +108,7 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
           className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-white rounded"
           onClick={() => setIsEditing(true)}
         >
-          <PencilSquareIcon label="Edit" />
+          <LabeledIcon icon={<PencilLine className="w-4" />} label="Edit" />
         </Button>
       </div>
 
@@ -136,7 +137,7 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
           {/* Ticket assigned to */}
           <tr>
             <td className={commonStyles}>
-              <PersonIcon label="Assigned To" />
+              <LabeledIcon icon={<User className="w-4" />} label="Assigned To" />
             </td>
             <td>
               <TicketAssignedTo assignedTo={ticket.assignedTo} />
@@ -145,21 +146,21 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
           {/* Ticket site */}
           <tr>
             <td className={commonStyles}>
-              <BuildingOfficeIcon label="Site" />
+              <LabeledIcon icon={<Building className="w-4" />} label="Site" />
             </td>
             <td>{ticket.site}</td>
           </tr>
           {/* Ticket category */}
           <tr>
             <td className={commonStyles}>
-              <TagIcon label="Category" />
+              <LabeledIcon icon={<Tag className="w-4" />} label="Category" />
             </td>
             <td>{ticket.category}</td>
           </tr>
           {/* Ticket created by */}
           <tr>
             <td className={commonStyles}>
-              <PersonIcon label="Created By" />
+              <LabeledIcon icon={<User className="w-4" />} label="Created By" />
             </td>
             <td>
               <TicketCreatedBy createdBy={ticket.createdBy} />
@@ -168,14 +169,14 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
           {/* Ticket created at */}
           <tr>
             <td className={commonStyles}>
-              <CalendarIcon label="Created On" />
+              <LabeledIcon icon={<Calendar className="w-4" />} label="Created On" />
             </td>
             <td>{ticketCreatedAt}</td>
           </tr>
           {/* Ticket updated at */}
           <tr>
             <td className={commonStyles}>
-              <CalendarIcon label="Last Modified" />
+              <LabeledIcon icon={<Calendar className="w-4" />} label="Last Modified" />
             </td>
             <td>{ticketUpdatedAt}</td>
           </tr>

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowTopRightSquareIcon } from "../ui/icons";
+import LabeledIcon from "../ui/labeled-icon";
+import { SquareArrowUpRight } from "lucide-react";
 
 export interface TicketAssignedToProps {
   assignedTo?: string;
@@ -14,7 +15,7 @@ export default function TicketAssignedTo({ assignedTo }: TicketAssignedToProps) 
         className="inline-block underline hover:text-blue-500"
         href={`https://mail.google.com/mail/?view=cm&fs=1&to=${assignedTo}`}
       >
-        <ArrowTopRightSquareIcon label={assignedTo} />
+        <LabeledIcon icon={<SquareArrowUpRight className="w-4" />} label={assignedTo} />
       </Link>
     );
   }

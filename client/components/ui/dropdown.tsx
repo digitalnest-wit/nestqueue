@@ -1,7 +1,7 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { MouseEvent, ReactNode, useState } from "react";
-import { CheckIcon } from "./icons";
 
 export interface DropdownProps {
   className?: string;
@@ -57,7 +57,7 @@ export default function Dropdown({ className, value, opts, onSelect, children }:
               className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 rounded`}
             >
               <span className="flex items-center gap-1">
-                {isSelected(opt) && <CheckIcon className="absolute -translate-x-3" />}
+                {isSelected(opt) && <Check className="w-4 absolute -translate-x-3" />}
                 <span className="pl-2">{opt}</span>
               </span>
             </li>

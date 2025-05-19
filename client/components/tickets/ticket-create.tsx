@@ -3,9 +3,10 @@
 import { useState, FormEvent } from "react";
 import Ticket, { allCategories, allPriorities, allSites, allStatuses, Priority } from "@/lib/types/ticket";
 import Button from "../ui/button";
-import { BuildingOfficeIcon, PersonIcon, TagIcon } from "../ui/icons";
 import { useCreateTicket } from "@/lib/hooks/queries/use-tickets";
 import { useToast } from "@/lib/hooks/use-toast";
+import LabeledIcon from "../ui/labeled-icon";
+import { Building, Tag, User } from "lucide-react";
 
 export interface TicketCreateProps {
   onCancel: () => void;
@@ -143,7 +144,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              <PersonIcon label="Assigned To" className="mr-1" />
+              <LabeledIcon className="mr-1" icon={<User className="w-4" />} label="Assigned To" />
             </label>
             <input
               type="text"
@@ -158,7 +159,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
           {/* Site */}
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              <BuildingOfficeIcon label="Site" className="mr-1" />
+              <LabeledIcon className="mr-1" icon={<Building className="w-4" />} label="Site" />
             </label>
             <select
               name="site"
@@ -177,7 +178,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
           {/* Category */}
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              <TagIcon label="Category" className="mr-1" />
+              <LabeledIcon className="mr-1" icon={<Tag className="w-4" />} label="Category" />
             </label>
             <select
               name="category"
