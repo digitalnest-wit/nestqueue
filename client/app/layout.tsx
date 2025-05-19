@@ -1,19 +1,25 @@
-import type { Metadata } from "next";
+"use client";
 
 import "./globals.css";
 import NavBar from "@/components/ui/nav-bar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactNode, useState } from "react";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import ToastProvider from "@/components/ui/toast";
 
-export const metadata: Metadata = {
-  title: "NESTQueue",
-  description: "Digital NEST ticket management system",
-};
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const [queryClient] = useState(() => new QueryClient());
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body className="antialiased">
         <NavBar />
-        {children}
+        <ToastProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <ReactQueryDevtools initialIsOpen={true} />
+          </QueryClientProvider>
+        </ToastProvider>
       </body>
     </html>
   );
