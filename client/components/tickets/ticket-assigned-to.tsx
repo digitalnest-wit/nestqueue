@@ -10,7 +10,10 @@ export interface TicketAssignedToProps {
 export default function TicketAssignedTo({ assignedTo }: TicketAssignedToProps) {
   if (assignedTo) {
     return (
-      <Link className="underline hover:text-blue-500" href={`https://mail.google.com/mail/?view=cm&fs=1&to=${assignedTo}`}>
+      <Link
+        className="inline-block underline hover:text-blue-500"
+        href={`https://mail.google.com/mail/?view=cm&fs=1&to=${assignedTo}`}
+      >
         <ArrowTopRightSquareIcon label={assignedTo} />
       </Link>
     );
