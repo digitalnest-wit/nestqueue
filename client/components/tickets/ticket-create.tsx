@@ -111,12 +111,16 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
 
         {/* Title */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Title
+            <span className="ml-0.5 text-red-500">*</span>
+          </label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
+            placeholder="Enter a title"
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
             required
           />
@@ -128,6 +132,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
           <textarea
             name="description"
             value={formData.description}
+            placeholder="A descriptive ticket makes a good ticket."
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
             rows={4}
@@ -145,6 +150,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               name="assignedTo"
               value={formData.assignedTo}
               onChange={handleChange}
+              placeholder="Unassigned"
               className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
             />
           </div>
