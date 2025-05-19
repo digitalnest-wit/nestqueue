@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 import NavBar from "@/components/ui/nav-bar";
+import LoginPage from "./login/page";
 
 export const metadata: Metadata = {
   title: "NESTQueue",
@@ -12,7 +13,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className="antialiased">
-        <NavBar />
+        <LoginPage />
         {children}
       </body>
     </html>
