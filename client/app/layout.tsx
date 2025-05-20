@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
-
 import "./globals.css";
-import NavBar from "@/components/ui/nav-bar";
-import LoginPage from "./login/page";
+import { AuthProvider } from "@/components/providers/auth-provider";
 
 export const metadata: Metadata = {
   title: "NESTQueue",
   description: "Digital NEST ticket management system",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="antialiased">
-        <LoginPage />
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

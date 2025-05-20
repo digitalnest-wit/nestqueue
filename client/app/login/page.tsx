@@ -1,13 +1,21 @@
-// filepath: /client/app/login/page.tsx
 "use client";
 import { useState } from "react";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/firebase/firebase";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/providers/auth-provider";
+import { useEffect } from "react";
 
 export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      router.push("/tickets");
+    }
+  }, [user, router]);
 
   const handleGoogleSignIn = async () => {
     try {
