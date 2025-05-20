@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import ToastProvider from "@/components/ui/toast";
+import ThemeProvider from "@/components/ui/theme";
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const [queryClient] = useState(() => new QueryClient());
@@ -13,13 +14,15 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="en">
       <body className="antialiased">
-        <NavBar />
-        <ToastProvider>
-          <QueryClientProvider client={queryClient}>
-            {children}
-            <ReactQueryDevtools initialIsOpen={true} />
-          </QueryClientProvider>
-        </ToastProvider>
+        <ThemeProvider>
+          <NavBar />
+          <ToastProvider>
+            <QueryClientProvider client={queryClient}>
+              {children}
+              <ReactQueryDevtools initialIsOpen={true} />
+            </QueryClientProvider>
+          </ToastProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

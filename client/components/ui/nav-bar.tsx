@@ -1,15 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import Button from "./button";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu } from "lucide-react";
+import { useTheme } from "@/lib/hooks/use-theme";
+import { ThemeType } from "@/lib/context/theme";
+import Dropdown from "./dropdown";
 
 export default function NavBar() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { theme, setTheme } = useTheme();
 
+  const themes: ThemeType[] = ["System", "Light", "Dark"];
   const commonLinkStyles = `${isExpanded ? "block" : ""}`;
+
+  const handleSelect = (_: MouseEvent<HTMLElement>, selection: string) => {
+    const themeSelected = selection as ThemeType;
+    setTheme(themeSelected);
+  };
 
   return (
     <nav className="flex flex-wrap items-center justify-between w-full py-4 md:py-0 px-4 text-lg bg-gray-900">
@@ -25,6 +35,10 @@ export default function NavBar() {
       <Button className="block md:hidden" onClick={() => setIsExpanded(!isExpanded)}>
         <Menu />
       </Button>
+
+      <Dropdown value={theme} opts={themes} onSelect={handleSelect}>
+        Set Theme: {theme}
+      </Dropdown>
 
       <div className={`w-full md:flex md:items-center md:w-auto ${isExpanded ? "" : "hidden"}`}>
         <ul className="text-base text-white md:flex md:justify-between md:pt-0 md:gap-4">
