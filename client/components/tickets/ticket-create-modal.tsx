@@ -1,10 +1,12 @@
-import { useState } from "react";
+"use client";
 
-import Modal from "../ui/modal";
+import { useState } from "react";
+import { Plus } from "lucide-react";
+
 import TicketCreate from "./ticket-create";
 import Button from "../ui/button";
-import { PlusIcon } from "../ui/icons";
-import { useToast } from "@/lib/hooks/use-toast";
+import LabeledIcon from "../ui/labeled-icon";
+import Modal from "../ui/modal";
 
 export default function TicketCreateModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +20,7 @@ export default function TicketCreateModal() {
         onClick={handleOpen}
         className="border border-green-600 dark:border-green-700 bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-800 dark:hover:border-green-800 text-white rounded"
       >
-        <PlusIcon label="New" />
+        <LabeledIcon className="text-sm" icon={<Plus className="w-4" />} label="New" />
       </Button>
       <Modal isOpen={isOpen} onClose={handleClose}>
         <TicketCreate onCancel={handleClose} onCreate={handleClose} />

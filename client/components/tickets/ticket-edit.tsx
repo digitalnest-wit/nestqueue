@@ -1,11 +1,13 @@
 "use client";
 
-import Ticket, { allCategories, allPriorities, allSites, allStatuses, Priority } from "@/lib/types/ticket";
-import Button from "../ui/button";
-import { BuildingOfficeIcon, PersonIcon, TagIcon } from "../ui/icons";
+import { Building, Tag, User } from "lucide-react";
 import { FormEvent, useState } from "react";
+
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
 import { useToast } from "@/lib/hooks/use-toast";
+import Ticket, { allCategories, allPriorities, allSites, allStatuses, Priority } from "@/lib/types/ticket";
+import Button from "../ui/button";
+import LabeledIcon from "../ui/labeled-icon";
 
 export interface TicketEditProps {
   ticketId: string;
@@ -125,26 +127,45 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
 
         {/* Ticket title */}
         <div className="mb-4">
-          <label className={`block ${commonLabelStyle}`}>Title</label>
-          <input type="text" name="title" value={formData.title} onChange={handleChange} className={commonSelectStyle} required />
+          <label className={`block ${commonLabelStyle}`}>
+            Title
+            <span className="ml-0.5 text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            placeholder="Enter a title"
+            onChange={handleChange}
+            className={commonSelectStyle}
+            required
+          />
         </div>
 
         {/* Ticket description */}
         <div className="mb-4">
           <label className={`block ${commonLabelStyle}`}>Description</label>
-          <textarea name="description" value={formData.description} onChange={handleChange} className={commonSelectStyle} rows={4} />
+          <textarea
+            name="description"
+            value={formData.description}
+            placeholder="A descriptive ticket makes a good ticket."
+            onChange={handleChange}
+            className={commonSelectStyle}
+            rows={4}
+          />
         </div>
 
         {/* Ticket assigned to */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label className={`flex items-center ${commonLabelStyle}`}>
-              <PersonIcon label="Assigned To" className="mr-1" />
+              <LabeledIcon className="mr-1" icon={<User className="w-4" />} label="Assigned To" />
             </label>
             <input
               type="text"
               name="assignedTo"
-              value={formData.assignedTo || ticket.assignedTo}
+              value={formData.assignedTo}
+              placeholder="Unassigned"
               onChange={handleChange}
               className={commonSelectStyle}
             />
@@ -153,7 +174,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
           {/* Ticket site */}
           <div>
             <label className={`flex items-center ${commonLabelStyle}`}>
-              <BuildingOfficeIcon label="Site" className="mr-1" />
+              <LabeledIcon className="mr-1" icon={<Building className="w-4" />} label="Site" />
             </label>
             <select name="site" value={formData.site || ticket.site} onChange={handleChange} className={commonSelectStyle}>
               {allSites.map((site) => (
@@ -167,7 +188,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
           {/* Ticket category */}
           <div>
             <label className={`flex items-center ${commonLabelStyle}`}>
-              <TagIcon label="Category" className="mr-1" />
+              <LabeledIcon className="mr-1" icon={<Tag className="w-4" />} label="Category" />
             </label>
             <select name="category" value={formData.category || ticket.category} onChange={handleChange} className={commonSelectStyle}>
               {allCategories.map((category) => (
