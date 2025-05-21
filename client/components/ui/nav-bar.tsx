@@ -4,9 +4,15 @@ import { useState } from "react";
 import Button from "./button";
 import { ThreeHorizontalLinesIcon } from "./icons";
 import Link from "next/link";
+import useAuth from "@/lib/hooks/use-auth";
 
 export default function NavBar() {
+  const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  if (user === null) {
+    return null;
+  }
 
   return (
     <nav className="flex flex-wrap items-center justify-between w-full py-4 md:py-0 px-4 text-lg bg-gray-900">

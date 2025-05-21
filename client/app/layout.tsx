@@ -10,12 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { user } = useAuth();
   return (
     <html lang="en">
       <body className="antialiased">
         <AuthProvider>
-          {user&&<NavBar />}
+          <NavBar />
           {children}
         </AuthProvider>
       </body>
