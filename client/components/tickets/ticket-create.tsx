@@ -71,20 +71,16 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
     }
   };
 
+  const labelStyles = "text-sm font-medium text-gray-700 dark:text-gray-300 mb-1";
+  const inputStyles = "w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md";
+
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-900">
-      <h2 className="text-xl font-bold mb-4">Create Ticket</h2>
-
+      <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Create Ticket</h2>
       <form onSubmit={handleSubmit}>
-        {/* Status */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
-          >
+          <label className={`block ${labelStyles}`}>Status</label>
+          <select name="status" value={formData.status} onChange={handleChange} className={inputStyles}>
             {allStatuses.map((status) => (
               <option key={status} value={status}>
                 {status}
@@ -92,17 +88,9 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
             ))}
           </select>
         </div>
-
-        {/* Priority */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
-          <select
-            name="priority"
-            value={formData.priority}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
-            required
-          >
+          <label className={`block ${labelStyles}`}>Priority</label>
+          <select name="priority" value={formData.priority} onChange={handleChange} className={inputStyles} required>
             {allPriorities.map((priority) => (
               <option key={priority} value={priority}>
                 {priority}
@@ -110,10 +98,8 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
             ))}
           </select>
         </div>
-
-        {/* Title */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className={`block ${labelStyles}`}>
             Title
             <span className="ml-0.5 text-red-500">*</span>
           </label>
@@ -123,25 +109,21 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
             value={formData.title}
             onChange={handleChange}
             placeholder="Enter a title"
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
+            className={inputStyles}
             required
           />
         </div>
-
-        {/* Description */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+          <label className={`block ${labelStyles}`}>Description</label>
           <textarea
             name="description"
             value={formData.description}
             placeholder="A descriptive ticket makes a good ticket."
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
+            className={inputStyles}
             rows={4}
           />
         </div>
-
-        {/* Assigned To */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -153,11 +135,9 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               value={formData.assignedTo}
               onChange={handleChange}
               placeholder="Unassigned"
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
+              className={inputStyles}
             />
           </div>
-
-          {/* Site */}
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               <LabeledIcon className="mr-1" icon={<Building className="w-4" />} label="Site" />
@@ -166,7 +146,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               name="site"
               value={formData.site}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md"
             >
               {allSites.map((site) => (
                 <option key={site} value={site}>
@@ -175,18 +155,11 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               ))}
             </select>
           </div>
-
-          {/* Category */}
           <div>
-            <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className={`flex items-center ${labelStyles}`}>
               <LabeledIcon className="mr-1" icon={<Tag className="w-4" />} label="Category" />
             </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md"
-            >
+            <select name="category" value={formData.category} onChange={handleChange} className={inputStyles}>
               {allCategories.map((category) => (
                 <option key={category} value={category}>
                   {category}
@@ -195,8 +168,6 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
             </select>
           </div>
         </div>
-
-        {/* Cancel & Save Buttons */}
         <div className="mt-6 flex justify-end gap-3">
           <Button
             type="button"

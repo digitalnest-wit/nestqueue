@@ -56,7 +56,7 @@ export default function Dropdown({ className, value, opts, onSelect, children }:
               onClick={(event) => handleSelect(event, opt)}
               className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 rounded`}
             >
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1 text-gray-900 dark:text-white">
                 {isSelected(opt) && <Check className="w-4 absolute -translate-x-3" />}
                 <span className="pl-2">{opt}</span>
               </span>

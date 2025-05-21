@@ -10,6 +10,7 @@ import { AuthProvider } from "@/components/auth/auth-provider";
 import NavBar from "@/components/ui/nav-bar";
 import ToastProvider from "@/components/ui/toast";
 import ThemeProvider from "@/components/ui/theme";
+import { ThemeApplicator } from "@/components/ui/theme-applicator";
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const [queryClient] = useState(() => new QueryClient());
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     <html lang="en">
       <body className="antialiased">
         <AuthProvider>
+          <ThemeApplicator />
           <ThemeProvider>
             <NavBar />
             <ToastProvider>
@@ -29,6 +31,6 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           </ThemeProvider>
         </AuthProvider>
       </body>
-    </html> 
+    </html>
   );
 }

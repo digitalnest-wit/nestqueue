@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { MouseEvent, useState } from "react";
@@ -8,8 +8,8 @@ import { MouseEvent, useState } from "react";
 import Button from "./button";
 import Dropdown from "./dropdown";
 import { ThemeType } from "@/lib/context/theme";
-import useAuth from "@/lib/hooks/use-auth";
 import { useTheme } from "@/lib/hooks/use-theme";
+import useAuth from "@/lib/hooks/use-auth";
 
 export default function NavBar() {
   const { user } = useAuth();
@@ -43,10 +43,6 @@ export default function NavBar() {
         <Menu />
       </Button>
 
-      <Dropdown value={theme} opts={themes} onSelect={handleSelect}>
-        Set Theme: {theme}
-      </Dropdown>
-
       <div className={`w-full md:flex md:items-center md:w-auto ${isExpanded ? "" : "hidden"}`}>
         <ul className="text-base text-white md:flex md:justify-between md:pt-0 md:gap-4">
           <li className="my-4">
@@ -63,6 +59,11 @@ export default function NavBar() {
             <Link className={commonLinkStyles} href="/settings">
               Settings
             </Link>
+          </li>
+          <li className="inline-block my-3">
+            <Dropdown className="p-1 rounded-full bg-gray-900 hover:bg-gray-800" value={theme} opts={themes} onSelect={handleSelect}>
+              <Moon />
+            </Dropdown>
           </li>
         </ul>
       </div>

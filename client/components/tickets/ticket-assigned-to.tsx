@@ -13,7 +13,7 @@ export default function TicketAssignedTo({ assignedTo }: TicketAssignedToProps) 
   if (assignedTo) {
     return (
       <Link
-        className="inline-block underline hover:text-blue-500"
+        className="inline-block underline text-gray-800 dark:text-gray-300 hover:text-blue-500"
         href={`https://mail.google.com/mail/?view=cm&fs=1&to=${assignedTo}`}
       >
         <LabeledIcon icon={<SquareArrowUpRight className="w-4" />} label={assignedTo} />
