@@ -1,8 +1,8 @@
 "use client";
-import { useAuth } from "@/components/providers/auth-provider";
+import { useAuth } from "@/lib/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import Navbar from "@/components/ui/nav-bar"; // Add this import
+import Navbar from "@/components/ui/nav-bar"; 
 
 export default function ProtectedLayout({
   children,
@@ -24,7 +24,6 @@ export default function ProtectedLayout({
 
   return (
     <>
-      <Navbar />
       {children}
     </>
   );
