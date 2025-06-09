@@ -1,28 +1,18 @@
 "use client";
 
-import { Menu, Moon, Sun } from "lucide-react";
+import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
 
 import Button from "./button";
-import Dropdown from "./dropdown";
-import { ThemeType } from "@/lib/context/theme";
-import { useTheme } from "@/lib/hooks/use-theme";
 import useAuth from "@/lib/hooks/use-auth";
 
 export default function NavBar() {
   const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
-  const { theme, setTheme } = useTheme();
 
-  const themes: ThemeType[] = ["System", "Light", "Dark"];
   const commonLinkStyles = `${isExpanded ? "block" : ""}`;
-
-  const handleSelect = (_: MouseEvent<HTMLElement>, selection: string) => {
-    const themeSelected = selection as ThemeType;
-    setTheme(themeSelected);
-  };
 
   if (user === null) {
     return null;
@@ -59,11 +49,6 @@ export default function NavBar() {
             <Link className={commonLinkStyles} href="/settings">
               Settings
             </Link>
-          </li>
-          <li className="inline-block my-3">
-            <Dropdown className="p-1 rounded-full bg-gray-900 hover:bg-gray-800" value={theme} opts={themes} onSelect={handleSelect}>
-              <Moon />
-            </Dropdown>
           </li>
         </ul>
       </div>
