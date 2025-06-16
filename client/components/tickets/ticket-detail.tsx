@@ -7,7 +7,7 @@ import { MouseEvent, useEffect, useState } from "react";
 import TicketAssignedTo from "./ticket-assigned-to";
 import TicketEdit from "./ticket-edit";
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
-import { Status } from "@/lib/types/ticket";
+import { Status, Statuses } from "@/lib/types/ticket";
 import Button from "../ui/button";
 import Dropdown from "../ui/dropdown";
 import LabeledIcon from "../ui/labeled-icon";

@@ -5,7 +5,7 @@ import { Building, Tag, User } from "lucide-react";
 
 import { useCreateTicket } from "@/lib/hooks/queries/use-tickets";
 import { useToast } from "@/lib/hooks/use-toast";
-import Ticket, { allCategories, allPriorities, allSites, allStatuses, Priority } from "@/lib/types/ticket";
+import Ticket, { Categories, Priority, Sites, Status, Priorities, Statuses } from "@/lib/types/ticket";
 import Button from "../ui/button";
 import LabeledIcon from "../ui/labeled-icon";
 
@@ -81,7 +81,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
         <div className="mb-4">
           <label className={`block ${labelStyles}`}>Status</label>
           <select name="status" value={formData.status} onChange={handleChange} className={inputStyles}>
-            {allStatuses.map((status) => (
+            {Statuses.map((status) => (
               <option key={status} value={status}>
                 {status}
               </option>
@@ -91,7 +91,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
         <div className="mb-4">
           <label className={`block ${labelStyles}`}>Priority</label>
           <select name="priority" value={formData.priority} onChange={handleChange} className={inputStyles} required>
-            {allPriorities.map((priority) => (
+            {Priorities.map((priority) => (
               <option key={priority} value={priority}>
                 {priority}
               </option>
@@ -148,7 +148,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md"
             >
-              {allSites.map((site) => (
+              {Sites.map((site) => (
                 <option key={site} value={site}>
                   {site}
                 </option>
@@ -160,7 +160,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               <LabeledIcon className="mr-1" icon={<Tag className="w-4" />} label="Category" />
             </label>
             <select name="category" value={formData.category} onChange={handleChange} className={inputStyles}>
-              {allCategories.map((category) => (
+              {Categories.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>

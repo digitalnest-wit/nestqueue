@@ -5,7 +5,7 @@ import { FormEvent, useState } from "react";
 
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
 import { useToast } from "@/lib/hooks/use-toast";
-import Ticket, { allCategories, allPriorities, allSites, allStatuses, Priority } from "@/lib/types/ticket";
+import Ticket, { Categories, Priority, Sites, Status, Priorities, Statuses } from "@/lib/types/ticket";
 import Button from "../ui/button";
 import LabeledIcon from "../ui/labeled-icon";
 
@@ -96,7 +96,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
         <div className="mb-4">
           <label className={`block ${labelStyle}`}>Status</label>
           <select name="status" value={formData.status || ticket.status} onChange={handleChange} className={inputStyles}>
-            {allStatuses.map((status) => (
+            {Statuses.map((status) => (
               <option key={status} value={status}>
                 {status}
               </option>
@@ -112,7 +112,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
             className={inputStyles}
             required
           >
-            {allPriorities.map((priority) => (
+            {Priorities.map((priority) => (
               <option key={priority} value={priority}>
                 {priority}
               </option>
@@ -164,7 +164,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
               <LabeledIcon className="mr-1" icon={<Building className="w-4" />} label="Site" />
             </label>
             <select name="site" value={formData.site || ticket.site} onChange={handleChange} className={inputStyles}>
-              {allSites.map((site) => (
+              {Sites.map((site) => (
                 <option key={site} value={site}>
                   {site}
                 </option>
@@ -176,7 +176,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
               <LabeledIcon className="mr-1" icon={<Tag className="w-4" />} label="Category" />
             </label>
             <select name="category" value={formData.category || ticket.category} onChange={handleChange} className={inputStyles}>
-              {allCategories.map((category) => (
+              {Categories.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>

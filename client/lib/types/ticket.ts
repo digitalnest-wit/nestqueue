@@ -12,14 +12,14 @@ export default interface Ticket {
   updatedAt: Date;
 }
 
-export type Site = "Salinas" | "Watsonville" | "HQ" | "Gilroy" | "Modesto" | "Stockton";
-export const allSites: Site[] = ["Gilroy", "HQ", "Modesto", "Salinas", "Stockton", "Watsonville"];
+export const Sites = ["Salinas", "Watsonville", "HQ", "Gilroy", "Modesto", "Stockton"] as const;
+export type Site = (typeof Sites)[number];
 
-export type Category = "Software" | "Hardware" | "Network";
-export const allCategories: Category[] = ["Hardware", "Network", "Software"];
+export const Categories = ["Software", "Hardware", "Network"] as const;
+export type Category = (typeof Categories)[number];
 
-export type Priority = 5 | 4 | 3 | 2 | 1;
-export const allPriorities: Priority[] = [5, 4, 3, 2, 1];
+export const Priorities = [5, 4, 3, 2, 1] as const;
+export type Priority = (typeof Priorities)[number];
 
-export type Status = "Open" | "Active" | "Closed" | "Rejected";
-export const allStatuses: Status[] = ["Active", "Open", "Closed", "Rejected"];
+export const Statuses = ["Open", "Active", "Closed", "Rejected"] as const;
+export type Status = (typeof Statuses)[number];
