@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
+import Navigation from "@/components/ui/navigation";
 
 export const metadata: Metadata = {
   title: "NestQueue",
   description: "In-house solution to manage IT tickets for the WIT pathway.",
 };
 
-interface Props {
+interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default function RootLayout({ children }: Readonly<Props>) {
+export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Navigation />
+        {children}
+      </body>
     </html>
   );
 }
