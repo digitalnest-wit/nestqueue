@@ -11,7 +11,7 @@ export default function Navigation() {
   const [expanded, setExpanded] = useState(false);
 
   function handleExpandClick() {
-    // TODO: Toggle the state of state variable `expanded`.
+    setExpanded(!expanded);
   }
 
   return (
@@ -25,8 +25,7 @@ export default function Navigation() {
         </Link>
       </div>
 
-      {/* TODO: Navigation bar doesn't expand when the button is clicked. */}
-      <Button className="block md:hidden">
+      <Button className="block md:hidden" onClick={handleExpandClick}>
         <Menu className="text-white" />
       </Button>
 
