@@ -2,17 +2,23 @@ package main
 
 import (
 	"net/http"
+	"strings"
 
 	"go.uber.org/zap"
 )
 
+const _clientHost = "localhost"
+
 // corsMiddleware adds CORS headers to allow cross-origin requests
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Allow requests from any origin
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		// Allow requests only from local clients.
+		origin := r.Header.Get("Origin")
+		if strings.Contains(origin, _clientHost) {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		}
 
 		// Handle preflight requests
 		if r.Method == "OPTIONS" {
