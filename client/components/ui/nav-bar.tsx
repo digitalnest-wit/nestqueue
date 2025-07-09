@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import Button from "./button";
 import useAuth from "@/lib/hooks/use-auth";
+import { auth } from "@/firebase/firebase";
 
 export default function NavBar() {
   const { user } = useAuth();
@@ -58,6 +59,7 @@ export default function NavBar() {
             alt={"user avatar"}
             width={40}
             height={40}
+            onClick={() => auth.signOut()}
           />
         ) : (
           // TODO: Set default profile icon
