@@ -51,6 +51,18 @@ export default function NavBar() {
             </Link>
           </li>
         </ul>
+        {user.photoURL ? (
+          <Image
+            className="rounded-full ml-4 cursor-pointer"
+            src={user.photoURL}
+            alt={"user avatar"}
+            width={40}
+            height={40}
+          />
+        ) : (
+          // TODO: Set default profile icon
+          <span>No Image</span>
+        )}
       </div>
     </nav>
   );

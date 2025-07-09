@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }: { children: Readonly<React.ReactNode>
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   if (loading) {
     return <div>Loading...</div>;
