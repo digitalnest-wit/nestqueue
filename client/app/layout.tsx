@@ -1,23 +1,26 @@
-import type { Metadata } from "next";
+"use client";
 
-import "./globals.css";
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import Navigation from "@/components/ui/navigation";
 
-export const metadata: Metadata = {
-  title: "NestQueue",
-  description: "In-house solution to manage IT tickets for the WIT pathway.",
-};
+import "./globals.css";
 
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
+  const [queryClient] = useState(() => new QueryClient());
+
   return (
     <html lang="en">
       <body>
         <Navigation />
-        {children}
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
       </body>
     </html>
   );
