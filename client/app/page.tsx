@@ -7,8 +7,6 @@ import Ticket from "@/lib/types/ticket";
 export default function Home() {
   const { data: tickets, error } = useTicketsQuery();
 
-  const handleTicketClick = (ticket: Ticket) => alert(ticket.id);
-
   if (error) {
     return <div>Failed to fetch tickets.</div>;
   }
@@ -19,7 +17,7 @@ export default function Home() {
 
   return (
     <>
-      <TicketsTable tickets={tickets} onTicketClick={handleTicketClick} />
+      <TicketsTable tickets={tickets} />
     </>
   );
 }
