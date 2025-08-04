@@ -5,22 +5,30 @@ import { Menu } from "lucide-react"; // Hamburger icon
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // Use for navigation if needed
 
-// import Button from "./button"; // OPTIONAL: Uncomment if you're using a custom Button component
-// import useAuth from "@/lib/hooks/use-auth"; // OPTIONAL: Uncomment if using auth context
-// import { auth } from "@/firebase/firebase"; // OPTIONAL: Uncomment if using Firebase auth
+ import Button from "./button"; // OPTIONAL: Uncomment if you're using a custom Button component
+ import { auth } from "@/firebase"; // OPTIONAL: Uncomment if using Firebase auth
+// import router from "next/dist/shared/lib/router/router";
 
 export default function NavBar() {
   const { user } = useAuth(); // Get user from auth context
   const [isExpanded, setIsExpanded] = useState(false);
+  const router = useRouter();
+
 
   // Styling for responsive nav links
   const commonLinkStyles = `${isExpanded ? "block" : ""}`;
 
   // OPTIONAL: Hide navbar if no user is logged in
-  // if (user === null) {
-  //   return null;
-  // }
+  if (user === null) {
+     return null;
+   }
+
+   const handleSignOut = async () => {
+     await auth.signOut();
+    router.push("/"); // Redirect to home after sign out
+   };
 
   return (
     <nav className="flex flex-wrap items-center justify-between w-full py-4 md:py-0 px-4 text-lg bg-gray-900">
@@ -55,17 +63,16 @@ export default function NavBar() {
               Page 2
             </Link>
           </li>
-          {/* HINT: Add more links if needed */}
         </ul>
 
       {user.photoURL ? (
         <Image
           className="rounded-full ml-4 cursor-pointer"
-          src={user.photoURL}
+          src={user.photoURL || "/default-profile.jpg"}
           alt={"user avatar"}
           width={40}
           height={40}
-          // onClick={() => auth.signOut()} // HINT: Add sign-out functionality if using Firebase
+          onClick={handleSignOut} 
         />
       ) : (
         <span>No Image</span>
