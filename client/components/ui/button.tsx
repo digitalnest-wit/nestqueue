@@ -8,24 +8,12 @@ interface ButtonProps {
   role?: "submit" | "reset" | "button" | undefined;
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  type?: "button" | "submit" | "reset";
 }
 
-export default function Button({
-  className,
-  children,
-  role = "button",
-  disabled = false,
-  onClick = () => {},
-}: ButtonProps) {
+export default function Button({ children, className, type = "button", ...props }: ButtonProps) {
   return (
-    <button
-      className={`cursor-pointer p-1 px-1.5 block transition-all duration-300 ease-out ${
-        className ? className : ""
-      }`}
-      role={role}
-      disabled={disabled}
-      onClick={onClick}
-    >
+    <button type={type} className={`py-2 px-4 font-semibold ${className}`} {...props}>
       {children}
     </button>
   );

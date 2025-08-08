@@ -1,53 +1,27 @@
-"use client";
-import { auth, provider } from "../../firebase";
-import { useState } from "react";
+import { auth, provider } from "@/firebase";
 import { signInWithPopup } from "firebase/auth";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/types/hooks/use-auth";
-import { useEffect } from "react";
+import Link from "next/link";
 
-export default function LoginPage() {
-  const [error, setError] = useState("");
-  const router = useRouter();
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (user) {
-      router.push("/tickets");
-    }
-  }, [user, router]);
-
-  const handleGoogleSignIn = async () => {
+export default function LoginButton() {
+  const handleLogin = async () => {
     try {
-      await signInWithPopup(auth, provider);
-      router.push("/tickets");
-    } catch (err: any) {
-      setError(err.message);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("✅ :", user.displayName);
+      window.location.href = "/tickets"; // fill in the right info
+    } catch (error: any) {
+      console.error("❌ :", error.message);
+      alert("Login failed. Try again.");
     }
   };
 
   return (
-    <div>
-      <div>
-        <h1>Welcome</h1>
-        
-        {error && (
-          <div>
-            {error}
-          </div>
-        )}
-
-        <button
-          onClick={handleGoogleSignIn}
-         >
-          <img
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-            alt="Google"
-            className="w-5 h-5"
-          />
-          Sign in with Google
-        </button>
-      </div>
-    </div>
+    <button
+      onClick={handleLogin}
+     className="bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-5 rounded border-none cursor-pointer w-full flex items-center justify-center gap-2"
+    >
+      <img src="/GoogleLogo.png" className="w-[25px]"/> 
+      <p>Sign in</p>
+    </button>
   );
 }

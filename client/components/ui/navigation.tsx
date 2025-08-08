@@ -1,6 +1,6 @@
 "use client";
 
-import useAuth from "@/lib/types/hooks/use-auth";
+import useAuth from "@/lib/hooks/use-auth";
 import { Menu } from "lucide-react"; // Hamburger icon
 import Image from "next/image";
 import Link from "next/link";
@@ -33,11 +33,11 @@ export default function NavBar() {
   return (
     <nav className="flex flex-wrap items-center justify-between w-full py-4 md:py-0 px-4 text-lg bg-gray-900">
       <div className="my-4">
-        <Link className="text-white" href="/">
+        <Link className="text-white" href="/tickets">
           <div className="flex items-center gap-3">
             {/* TODO: Replace with your own logo or name */}
-            <Image width={24} height={24} src="/your-logo.png" alt="Logo" />
-            <span>YourApp</span>
+            <Image width={24} height={24} src="/favicon.ico" alt="Logo" />
+            <span>NestQueue</span>
           </div>
         </Link>
       </div>
@@ -54,13 +54,13 @@ export default function NavBar() {
         <ul className="text-base text-white md:flex md:justify-between md:pt-0 md:gap-4">
           {/* TODO: Add your nav links here */}
           <li className="my-4">
-            <Link className={commonLinkStyles} href="/page1">
-              Page 1
+            <Link className={commonLinkStyles} href="/tickets">
+              Tickets
             </Link>
           </li>
           <li className="my-4">
-            <Link className={commonLinkStyles} href="/page2">
-              Page 2
+            <Link className={commonLinkStyles} href="/user">
+              Users
             </Link>
           </li>
         </ul>

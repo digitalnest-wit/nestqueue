@@ -1,5 +1,6 @@
 PORT = 3000
 
+
 run: install
 	@go run cmd/server/main.go \
 		cmd/server/logger.go \
