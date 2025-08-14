@@ -1,24 +1,16 @@
 import { ReactNode } from "react";
 
 interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  active: boolean;
   children: ReactNode;
 }
 
-export default function Modal({ isOpen, onClose, children }: ModalProps) {
-  if (!isOpen) return null;
+export default function Modal({ active, children }: ModalProps) {
+  if (!active) return null;
 
   return (
-    <div className="fixed backdrop-blur-sm backdrop-opacity-90 inset-0 z-50 flex items-center justify-center">
+    <div className="fixed backdrop-blur-xs inset-0 z-50 flex items-center justify-center">
       <div className="bg-gray-50 dark:bg-gray-900 p-1 rounded-lg shadow-lg w-full max-w-lg relative">
-        <button
-          onClick={onClose}
-          className="absolute hover:cursor-pointer top-2 right-2 text-gray-500 dark:text-gray-300 hover:text-red-500 text-xl font-bold"
-          aria-label="Close"
-        >
-          &times;
-        </button>
         {children}
       </div>
     </div>
