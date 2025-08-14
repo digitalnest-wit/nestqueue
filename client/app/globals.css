@@ -21,7 +21,7 @@
 
 body {
   background-image: url(/Dnest-bg3.png);
-  background-size: fill;
+  background-size: cover;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
