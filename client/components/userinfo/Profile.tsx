@@ -26,7 +26,7 @@ export default function Profile({
 }: ProfileProps) {
   const [bioValue, setBioValue] = useState(bio);
   const [editMode, setEditMode] = useState(false);
-  const { user } = useAuth(); // user.photoURL is the Google profile image
+  const { user } = useAuth();
 
   const handleLogout = async () => {
     window.location.href = "/";
@@ -49,12 +49,18 @@ export default function Profile({
               alt=""
             />
             <h1 className="my-2 text-xl">{name}</h1>
-            <h2 className="text-l drop-shadow-md bg-amber-400 w-auto rounded-3xl px-3">{role}</h2>
+            <h2 className="text-l drop-shadow-md bg-amber-400 w-auto rounded-3xl px-3">
+              {role}
+            </h2>
             <h2 className="mt-2 mb-8 text-l text-sky-800">{title}</h2>
             <h2 className="text-base">📍 {location}</h2>
             <div className="flex flex-row">
-              <h2 className="text-base mx-1 text-neutral-500 cursor-pointer hover:text-emerald-500 underline">{phone}</h2>
-              <h2 className="text-base mx-1 text-neutral-500 cursor-pointer hover:text-emerald-500 underline">{email}</h2>
+              <h2 className="text-base mx-1 text-neutral-500 cursor-pointer hover:text-emerald-500 underline">
+                {phone}
+              </h2>
+              <h2 className="text-base mx-1 text-neutral-500 cursor-pointer hover:text-emerald-500 underline">
+                {email}
+              </h2>
             </div>
             <h2 className="w-full text-base">{bioValue}</h2>
             <button
@@ -67,7 +73,7 @@ export default function Profile({
         ) : (
           <form
             className="flex flex-col items-center self-center w-full"
-            onSubmit={e => {
+            onSubmit={(e) => {
               e.preventDefault();
               handleSave();
             }}
@@ -87,10 +93,16 @@ export default function Profile({
               change photo
             </button>
             <h1 className="my-2 text-xl">{name}</h1>
-            <h2 className="text-l drop-shadow-md bg-amber-400 w-auto rounded-3xl px-3">{role}</h2>
+            <h2 className="text-l drop-shadow-md bg-amber-400 w-auto rounded-3xl px-3">
+              {role}
+            </h2>
             <h2 className="mt-2 mb-8 text-l text-sky-800">{title}</h2>
             <label>Location</label>
-            <input type="text" defaultValue={location} className="mx-1 border-1 rounded-md text-base mb-2" />
+            <input
+              type="text"
+              defaultValue={location}
+              className="mx-1 border-1 rounded-md text-base mb-2"
+            />
             <fieldset className="flex flex-row mb-2 w-full">
               <div className="flex flex-col w-1/2">
                 <label htmlFor="phone">Phone #</label>
@@ -117,7 +129,7 @@ export default function Profile({
               name="bio"
               className="resize-y w-full field-sizing-content text-wrap mx-1 border-1 rounded-md text-base mb-2"
               value={bioValue}
-              onChange={e => setBioValue(e.target.value)}
+              onChange={(e) => setBioValue(e.target.value)}
             ></textarea>
             <button
               type="submit"
