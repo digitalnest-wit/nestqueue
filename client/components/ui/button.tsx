@@ -19,7 +19,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`py-2 px-4 font-semibold ${className}`}
+      className={`py-1 px-2 cursor-pointer ${className}`}
       type={type}
       disabled={disabled}
       onClick={onClick}

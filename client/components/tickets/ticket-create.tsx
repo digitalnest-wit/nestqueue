@@ -100,7 +100,7 @@ export default function TicketCreate({ onDismiss }: TicketCreateProps) {
   };
 
   return (
-    <div className="bg-gray-50 p-3 text-sm">
+    <div className="bg-gray-50 dark:bg-gray-900 p-3 text-sm">
       <h2 className="text-lg font-bold mb-2">Create Ticket</h2>
       <form onSubmit={handleFormSubmit}>
         <FormTextInput
@@ -165,14 +165,14 @@ export default function TicketCreate({ onDismiss }: TicketCreateProps) {
         </div>
         <div className="mt-6 flex justify-end gap-3">
           <Button
-            className="bg-gray-200 hover:bg-gray-300 text-gray-500 rounded"
+            className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-100 rounded"
             onClick={handleFormDismiss}
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="bg-green-600 hover:bg-green-700 text-white rounded"
+            className="border border-green-600 dark:border-green-700 bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-800 dark:hover:border-green-800 text-white rounded"
             disabled={saving}
           >
             {saving ? "Creating..." : "Create"}

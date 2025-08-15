@@ -47,7 +47,7 @@ export default function FormTextInput({
         </label>
       ) : (
         <label
-          className="text-sm font-medium text-gray-700 mb-1"
+          className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
           htmlFor={elementName}
         >
           {label}
@@ -57,7 +57,7 @@ export default function FormTextInput({
 
       <textarea
         id={elementName}
-        className="w-full p-1.5 border border-gray-300 text-gray-700 rounded-md"
+        className="w-full p-1.5 border border-gray-300 dark:border-gray-800 text-gray-900 dark:text-gray-100 outline-0 focus:outline-1 focus:outline-green-500 rounded-md"
         name={elementName}
         rows={rows}
         value={value}

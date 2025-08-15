@@ -32,7 +32,7 @@ export default function FormSelectInput({
     <div className={className}>
       {icon ? (
         <label
-          className="flex items-center text-sm text-gray-700 mb-1"
+          className="flex items-center text-sm text-gray-700 dark:text-gray-300 mb-1"
           htmlFor={elementName}
         >
           <div className="flex gap-2 items-center mr-1">
@@ -42,7 +42,7 @@ export default function FormSelectInput({
         </label>
       ) : (
         <label
-          className="block text-sm text-gray-700 mb-1"
+          className="block text-sm text-gray-700 dark:text-gray-300 mb-1"
           htmlFor={elementName}
         >
           {label}
@@ -54,7 +54,7 @@ export default function FormSelectInput({
         name={elementName}
         value={value || ""}
         onChange={onChange}
-        className="w-full p-1.5 border border-gray-300 text-gray-700 rounded-md"
+        className="w-full p-1.5 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 focus:outline-1 focus:outline-green-500 rounded-md"
       >
         {options.map((opt) => (
           <option key={opt} value={opt}>
