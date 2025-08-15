@@ -1,13 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { Building, Calendar, PencilLine, SquareArrowUpRight, Tag, User } from "lucide-react";
+import {
+  Building,
+  Calendar,
+  PencilLine,
+  SquareArrowUpRight,
+  Tag,
+  User,
+} from "lucide-react";
 import { MouseEvent, useEffect, useState } from "react";
 
 import TicketAssignedTo from "./ticket-assigned-to";
 import TicketEdit from "./ticket-edit";
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
-import { Status, Statuses } from "@/lib/types/ticket";
+import { Status } from "@/lib/types/ticket";
 import Button from "../ui/button";
 import Dropdown from "../ui/dropdown";
 import LabeledIcon from "../ui/labeled-icon";
@@ -18,7 +25,11 @@ export interface TicketDetailProps {
   onUpdate: () => void;
 }
 
-export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDetailProps) {
+export default function TicketDetail({
+  ticketId,
+  onDismiss,
+  onUpdate,
+}: TicketDetailProps) {
   const { data: ticket } = useTicket(ticketId);
   const { mutate: updateTicket } = useUpdateTicket();
   const [status, setStatus] = useState<Status>("Active");
@@ -69,8 +80,14 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
 
   const TicketCreatedBy = ({ createdBy }: { createdBy: string }) => {
     return (
-      <Link className="underline hover:text-blue-500" href={`https://mail.google.com/mail/?view=cm&fs=1&to=${createdBy}`}>
-        <LabeledIcon icon={<SquareArrowUpRight className="w-4" />} label={createdBy} />
+      <Link
+        className="underline hover:text-blue-500"
+        href={`https://mail.google.com/mail/?view=cm&fs=1&to=${createdBy}`}
+      >
+        <LabeledIcon
+          icon={<SquareArrowUpRight className="w-4" />}
+          label={createdBy}
+        />
       </Link>
     );
   };
@@ -80,12 +97,18 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
 
   const statusColor: Record<Status, string> = {
     Open: "bg-green-500 dark:bg-green-400 hover:text-green-500 dark:hover:text-green-400",
-    Active: "bg-blue-500 dark:bg-blue-400 hover:text-blue-500 dark:hover:text-blue-400",
-    Closed: "bg-gray-500 dark:bg-gray-400 hover:text-gray-500 dark:hover:text-gray-400",
-    Rejected: "bg-red-500 dark:bg-red-400 hover:text-red-500 dark:hover:text-red-400",
+    Active:
+      "bg-blue-500 dark:bg-blue-400 hover:text-blue-500 dark:hover:text-blue-400",
+    Closed:
+      "bg-gray-500 dark:bg-gray-400 hover:text-gray-500 dark:hover:text-gray-400",
+    Rejected:
+      "bg-red-500 dark:bg-red-400 hover:text-red-500 dark:hover:text-red-400",
   };
 
-  const handleStatusSelection = (_event: MouseEvent<HTMLElement>, selectedOpt: string) => {
+  const handleStatusSelection = (
+    _event: MouseEvent<HTMLElement>,
+    selectedOpt: string
+  ) => {
     // Type cast should never fail
     const updatedStatus = selectedOpt as Status;
 
@@ -101,7 +124,7 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
           className="px-2 bg-gray-900 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-600 text-white rounded"
           onClick={onDismiss}
         >
-          &lt;-
+          Close
         </Button>
         <Button
           className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-white rounded"
@@ -110,24 +133,35 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
           <LabeledIcon icon={<PencilLine className="w-4" />} label="Edit" />
         </Button>
       </div>
-      <p className="mt-3 mb-1 text-sm text-gray-600 dark:text-gray-500">TK {ticket.id}</p>
+      <p className="mt-3 mb-1 text-sm text-gray-600 dark:text-gray-500">
+        TK {ticket.id}
+      </p>
       <div className="flex gap-5 items-center">
         <Dropdown
-          className={`${statusColor[ticket.status]} text-white dark:text-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700`}
+          className={`${
+            statusColor[ticket.status]
+          } text-white dark:text-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700`}
           value={status}
           opts={statusOpts}
           onSelect={handleStatusSelection}
         >
           <p className={`font-bold`}>{ticket.status}</p>
         </Dropdown>
-        <p className="text-xl font-bold text-gray-800 dark:text-gray-300">{ticket.title}</p>
+        <p className="text-xl font-bold text-gray-800 dark:text-gray-300">
+          {ticket.title}
+        </p>
       </div>
-      <p className="my-4 text-gray-800 dark:text-gray-300">{ticket.description}</p>
+      <p className="my-4 text-gray-800 dark:text-gray-300">
+        {ticket.description}
+      </p>
       <table className="table-auto min-w-full">
         <tbody>
           <tr>
             <td className={labelStyles}>
-              <LabeledIcon icon={<User className="w-4" />} label="Assigned To" />
+              <LabeledIcon
+                icon={<User className="w-4" />}
+                label="Assigned To"
+              />
             </td>
             <td>
               <TicketAssignedTo assignedTo={ticket.assignedTo} />
@@ -143,7 +177,9 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
             <td className={labelStyles}>
               <LabeledIcon icon={<Tag className="w-4" />} label="Category" />
             </td>
-            <td className="text-gray-800 dark:text-gray-300">{ticket.category}</td>
+            <td className="text-gray-800 dark:text-gray-300">
+              {ticket.category}
+            </td>
           </tr>
           <tr>
             <td className={labelStyles}>
@@ -155,15 +191,25 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
           </tr>
           <tr>
             <td className={labelStyles}>
-              <LabeledIcon icon={<Calendar className="w-4" />} label="Created On" />
+              <LabeledIcon
+                icon={<Calendar className="w-4" />}
+                label="Created On"
+              />
             </td>
-            <td className="text-gray-800 dark:text-gray-300">{ticketCreatedAt}</td>
+            <td className="text-gray-800 dark:text-gray-300">
+              {ticketCreatedAt}
+            </td>
           </tr>
           <tr>
             <td className={labelStyles}>
-              <LabeledIcon icon={<Calendar className="w-4" />} label="Last Modified" />
+              <LabeledIcon
+                icon={<Calendar className="w-4" />}
+                label="Last Modified"
+              />
             </td>
-            <td className="text-gray-800 dark:text-gray-300">{ticketUpdatedAt}</td>
+            <td className="text-gray-800 dark:text-gray-300">
+              {ticketUpdatedAt}
+            </td>
           </tr>
         </tbody>
       </table>
