@@ -7,11 +7,12 @@ import TicketCreate from "./ticket-create";
 import Button from "../ui/button";
 import LabeledIcon from "../ui/labeled-icon";
 import Modal from "../ui/modal";
+import Ticket from "@/lib/types/ticket";
 
 export default function TicketCreateModal() {
   const [active, setActive] = useState(false);
 
-  const handleClose = () => setActive(false);
+  const handleClose = (_?: Ticket) => setActive(false);
   const handleOpen = () => setActive(true);
 
   return (
@@ -27,7 +28,7 @@ export default function TicketCreateModal() {
         />
       </Button>
       <Modal active={active}>
-        <TicketCreate onCancel={handleClose} onCreate={handleClose} />
+        <TicketCreate onDismiss={handleClose} />
       </Modal>
     </>
   );

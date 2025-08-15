@@ -5,15 +5,25 @@ import { MouseEventHandler, ReactNode } from "react";
 interface ButtonProps {
   className?: string;
   children: Readonly<ReactNode>;
-  role?: "submit" | "reset" | "button" | undefined;
+  type?: "submit" | "reset" | "button" | undefined;
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
-  type?: "button" | "submit" | "reset";
 }
 
-export default function Button({ children, className, type = "button", ...props }: ButtonProps) {
+export default function Button({
+  className = "",
+  children,
+  type = "button",
+  disabled,
+  onClick,
+}: ButtonProps) {
   return (
-    <button type={type} className={`py-2 px-4 font-semibold ${className}`} {...props}>
+    <button
+      className={`py-2 px-4 font-semibold ${className}`}
+      type={type}
+      disabled={disabled}
+      onClick={onClick}
+    >
       {children}
     </button>
   );
