@@ -1,8 +1,13 @@
-import type { Metadata } from "next";
+import { Metadata } from "next";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import QueryProvider from "@/QueryProvider";
 
 import "./globals.css";
+
 import Navigation from "@/components/ui/navigation";
+import ToastProvider from "@/components/ui/toast";
+import ThemeProvider from "@/components/ui/theme";
+import { ThemeApplicator } from "@/components/ui/theme-applicator";
 
 export const metadata: Metadata = {
   title: "NestQueue",
@@ -16,12 +21,19 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html lang="en">
-      <body>
+      <body className="antialiased">
         <AuthProvider>
-          <Navigation />
-          {children}
+          <ThemeApplicator />
+          <ThemeProvider>
+              <Navigation />
+              <ToastProvider>
+                <QueryProvider>
+                  {children}
+                </QueryProvider>
+              </ToastProvider>
+          </ThemeProvider>
         </AuthProvider>
       </body>
-    </html>
+    </html> 
   );
 }

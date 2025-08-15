@@ -20,7 +20,24 @@
 }
 
 body {
-  background: var(--background);
+  background-image: url(/Dnest-bg3.png);
+  background-size: cover;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overscroll-behavior: none;
+}
+
+@layer utilities {
+  .animate-grow {
+    animation: grow 0.2s ease-in-out;
+  }
+
+  @keyframes grow {
+    0% {
+      transform: scale(0.5);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
 }

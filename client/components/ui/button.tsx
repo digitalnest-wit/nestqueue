@@ -5,24 +5,22 @@ import { MouseEventHandler, ReactNode } from "react";
 interface ButtonProps {
   className?: string;
   children: Readonly<ReactNode>;
-  role?: "submit" | "reset" | "button" | undefined;
+  type?: "submit" | "reset" | "button" | undefined;
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
 export default function Button({
-  className,
+  className = "",
   children,
-  role = "button",
-  disabled = false,
-  onClick = () => {},
+  type = "button",
+  disabled,
+  onClick,
 }: ButtonProps) {
   return (
     <button
-      className={`cursor-pointer p-1 px-1.5 block transition-all duration-300 ease-out ${
-        className ? className : ""
-      }`}
-      role={role}
+      className={`py-1 px-2 cursor-pointer ${className}`}
+      type={type}
       disabled={disabled}
       onClick={onClick}
     >

@@ -1,56 +1,78 @@
 "use client";
 
+import useAuth from "@/lib/hooks/use-auth";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-import Button from "./button";
+import { auth } from "@/firebase";
 
-export default function Navigation() {
-  const [expanded, setExpanded] = useState(false);
+export default function NavBar() {
+  const { user } = useAuth();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const router = useRouter();
 
-  function handleExpandClick() {
-    // TODO: Toggle the state of state variable `expanded`.
+  const commonLinkStyles = `${isExpanded ? "block" : ""}`;
+
+  if (user === null) {
+    return null;
   }
+
+  const handleSignOut = async () => {
+    await auth.signOut();
+    router.push("/");
+  };
 
   return (
     <nav className="flex flex-wrap items-center justify-between w-full py-4 md:py-0 px-4 text-lg bg-gray-900">
       <div className="my-4">
-        <Link className="text-white" href="/">
+        <Link className="text-white" href="/tickets">
           <div className="flex items-center gap-3">
-            <Image width={24} height={24} src="/digitalnest-logo.png" alt="" />
-            NestQueue
+            <Image width={24} height={24} src="/favicon.ico" alt="Logo" />
+            <span>NestQueue</span>
           </div>
         </Link>
       </div>
 
-      {/* TODO: Navigation bar doesn't expand when the button is clicked. */}
-      <Button className="block md:hidden">
-        <Menu className="text-white" />
-      </Button>
+      <button
+        className="block md:hidden text-white"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <Menu />
+      </button>
 
       <div
         className={`w-full md:flex md:items-center md:w-auto ${
-          expanded ? "" : "hidden"
+          isExpanded ? "" : "hidden"
         }`}
       >
         <ul className="text-base text-white md:flex md:justify-between md:pt-0 md:gap-4">
           <li className="my-4">
-            <Link className={expanded ? "block" : ""} href="/">
+            <Link className={commonLinkStyles} href="/tickets">
               Tickets
             </Link>
           </li>
           <li className="my-4">
-            <Link
-              className={expanded ? "block" : ""}
-              href="https://digitalnest.org/"
-              target="_blank"
-            >
-              Digital NEST
+            <Link className={commonLinkStyles} href="/user">
+              Users
             </Link>
           </li>
         </ul>
+
+        {user.photoURL ? (
+          <Image
+            className="rounded-full ml-4 cursor-pointer"
+            src={user.photoURL || "/default-profile.jpg"}
+            alt={"user avatar"}
+            width={40}
+            height={40}
+            onClick={handleSignOut}
+          />
+        ) : (
+          <span>No Image</span>
+        )}
       </div>
     </nav>
   );
