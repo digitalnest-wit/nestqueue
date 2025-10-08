@@ -1,7 +1,7 @@
 "use client";
 
 import { Building, Tag, User } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
 import { useToast } from "@/lib/hooks/use-toast";
@@ -20,8 +20,23 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
   const { data: ticket } = useTicket(ticketId);
   const { mutate: updateTicket } = useUpdateTicket();
 
-  const [formData, setFormData] = useState<Partial<Ticket>>(ticket || {});
+  const [formData, setFormData] = useState<Omit<Partial<Ticket>, "deadline"> & { deadline?: string | Date }>(ticket || ({} as Omit<Partial<Ticket>, "deadline"> & { deadline?: string | Date }));
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (ticket) {
+      const normalizedDeadline = ticket.deadline
+        ? (String(ticket.deadline).includes("T") ? String(ticket.deadline).split("T")[0] : String(ticket.deadline))
+        : "";
+
+      setFormData((prev) =>
+        ({
+          ...(prev as Omit<Partial<Ticket>, "deadline"> & { deadline?: string | Date }),
+          deadline: normalizedDeadline,
+        } as Omit<Partial<Ticket>, "deadline"> & { deadline?: string | Date })
+      );
+    }
+  }, [ticket]);
 
   if (!ticket) {
     let layout = <></>;
@@ -66,8 +81,19 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
     setIsSaving(true);
 
     try {
-      updateTicket({ id: ticketId, updates: formData });
-      onSave(formData);
+      const normalizedDeadline = formData.deadline
+        ? typeof formData.deadline === "string"
+          ? new Date(formData.deadline)
+          : (formData.deadline as Date)
+        : undefined;
+
+      const updates: Partial<Ticket> = {
+        ...(formData as Omit<Partial<Ticket>, "deadline">),
+        deadline: normalizedDeadline,
+      };
+
+      updateTicket({ id: ticketId, updates });
+      onSave(updates);
       addToast("Ticket updated successfully.", "Info", 2500);
     } catch (error) {
       console.error("Error updating ticket:", error);
@@ -183,6 +209,21 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
               ))}
             </select>
           </div>
+        </div>
+        {/* Deadline input in the edit form */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium">Deadline</label>
+          <input
+            type="date"
+            name="deadline"
+            value={
+              formData.deadline instanceof Date
+                ? formData.deadline.toISOString().split("T")[0]
+                : (formData.deadline ?? "")
+            }
+            onChange={(e) => setFormData((prev) => ({ ...prev, deadline: e.target.value as string }))}
+            className={inputStyles}
+          />
         </div>
         <div className="mt-6 flex justify-end gap-3">
           <Button

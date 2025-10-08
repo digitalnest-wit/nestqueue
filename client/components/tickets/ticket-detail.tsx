@@ -67,6 +67,24 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
   const ticketCreatedAt = new Date(ticket.createdOn).toDateString();
   const ticketUpdatedAt = new Date(ticket.updatedAt).toDateString();
 
+  // helper: format date-only strings (YYYY-MM-DD) or Date objects into local date without TZ shift
+  const formatDateFromDateOnly = (raw?: string | Date | null) => {
+    if (!raw) return null;
+
+    // If we receive a Date, normalize to local date (year, month, day) to avoid TZ shifts
+    if (raw instanceof Date) {
+      const dt = new Date(raw.getFullYear(), raw.getMonth(), raw.getDate());
+      return dt.toLocaleDateString();
+    }
+
+    const datePart = String(raw).includes("T") ? String(raw).split("T")[0] : String(raw);
+    const parts = datePart.split("-");
+    if (parts.length !== 3) return null;
+    const [y, m, d] = parts.map((p) => Number(p));
+    const dt = new Date(y, m - 1, d);
+    return dt.toLocaleDateString();
+  };
+
   const TicketCreatedBy = ({ createdBy }: { createdBy: string }) => {
     return (
       <Link className="underline hover:text-blue-500" href={`https://mail.google.com/mail/?view=cm&fs=1&to=${createdBy}`}>
@@ -93,6 +111,18 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
     updateTicket({ id: ticketId, updates: { status: updatedStatus } });
     setTimeout(onUpdate, 300);
   };
+
+  // compute deadline display and overdue
+  const deadlineDisplay = formatDateFromDateOnly(ticket.deadline);
+  const isOverdue = (() => {
+    if (!ticket.deadline) return false;
+    const datePart = String(ticket.deadline).includes("T") ? String(ticket.deadline).split("T")[0] : String(ticket.deadline);
+    const [y, m, d] = datePart.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    return dt.getTime() < todayStart.getTime();
+  })();
 
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-800">
@@ -159,6 +189,18 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
             </td>
             <td className="text-gray-800 dark:text-gray-300">{ticketCreatedAt}</td>
           </tr>
+
+          {/* Deadline row */}
+          <tr>
+            <td className={labelStyles}>
+              <LabeledIcon icon={<Calendar className="w-4" />} label="Deadline" />
+            </td>
+            <td className="text-gray-800 dark:text-gray-300">
+              {deadlineDisplay ?? <span className="text-gray-500">None</span>}
+              {isOverdue && <span className="ml-2 text-red-600 font-bold">Overdue</span>}
+            </td>
+          </tr>
+
           <tr>
             <td className={labelStyles}>
               <LabeledIcon icon={<Calendar className="w-4" />} label="Last Modified" />
