@@ -1,7 +1,7 @@
 "use client";
 
 import { Building, Tag, User } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
 import { useToast } from "@/lib/hooks/use-toast";
@@ -20,8 +20,20 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
   const { data: ticket } = useTicket(ticketId);
   const { mutate: updateTicket } = useUpdateTicket();
 
-  const [formData, setFormData] = useState<Partial<Ticket>>(ticket || {});
+  const [formData, setFormData] = useState<Partial<Ticket> & { deadline?: string }>(ticket || {});
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (ticket) {
+      setFormData((prev) => ({
+        ...prev,
+        // normalize deadline to YYYY-MM-DD for the date input
+        constDeadline: undefined,
+        deadline: (ticket as any).deadline ? (String((ticket as any).deadline).includes("T") ? String((ticket as any).deadline).split("T")[0] : String((ticket as any).deadline)) : "",
+        // ...existing fields...
+      }));
+    }
+  }, [ticket]);
 
   if (!ticket) {
     let layout = <></>;
@@ -183,6 +195,17 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
               ))}
             </select>
           </div>
+        </div>
+        {/* Deadline input in the edit form */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium">Deadline</label>
+          <input
+            type="date"
+            name="deadline"
+            value={(formData as any).deadline ?? ""}
+            onChange={(e) => setFormData((prev) => ({ ...(prev as any), deadline: e.target.value }))}
+            className="w-full p-2 border rounded"
+          />
         </div>
         <div className="mt-6 flex justify-end gap-3">
           <Button

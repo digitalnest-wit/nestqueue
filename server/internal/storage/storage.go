@@ -168,6 +168,15 @@ func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[s
 		updatesDoc = append(updatesDoc, bson.E{Key: "status", Value: status})
 	}
 
+	if deadline, ok := updates["deadline"].(string); ok {
+		parsedDeadline, err := time.Parse(time.RFC3339, deadline)
+		if err != nil {
+			sugar.Debugw("failed to parse deadline", "error", err, "value", deadline)
+			return nil, err
+		}
+		updatesDoc = append(updatesDoc, bson.E{Key: "deadline", Value: parsedDeadline})
+	}
+
 	if len(updates) > 0 {
 		updatesDoc = append(updatesDoc, bson.E{Key: "updatedAt", Value: time.Now()})
 	}

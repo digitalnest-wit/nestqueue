@@ -67,6 +67,26 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
   const ticketCreatedAt = new Date(ticket.createdOn).toDateString();
   const ticketUpdatedAt = new Date(ticket.updatedAt).toDateString();
 
+  // helper: format date-only strings (YYYY-MM-DD) into local date without TZ shift
+  const formatDateFromDateOnly = (raw?: string | null) => {
+    if (!raw) return null;
+    const datePart = String(raw).includes("T") ? String(raw).split("T")[0] : String(raw);
+    const parts = datePart.split("-");
+    if (parts.length !== 3) return null;
+    const [y, m, d] = parts.map((p) => Number(p));
+    const dt = new Date(y, m - 1, d);
+    return dt.toLocaleDateString();
+  };
+
+  // screenshot: ensure absolute URL when server returns relative path
+  const makeScreenshotUrl = (path?: string | null) => {
+    if (!path) return null;
+    if (path.startsWith("http://") || path.startsWith("https://")) return path;
+    const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+    // build with or without trailing slash cleanly
+    return `${base.replace(/\/$/, "")}${path.startsWith("/") ? "" : "/"}${path}`;
+  };
+
   const TicketCreatedBy = ({ createdBy }: { createdBy: string }) => {
     return (
       <Link className="underline hover:text-blue-500" href={`https://mail.google.com/mail/?view=cm&fs=1&to=${createdBy}`}>
@@ -94,6 +114,23 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
     setTimeout(onUpdate, 300);
   };
 
+  // compute deadline display and overdue
+    // ticket may not have the `deadline` property on the inferred Ticket type,
+    // so read it into a local variable with a narrow/known type to avoid TS errors.
+    const deadline = (ticket as any).deadline as string | null | undefined;
+    const deadlineDisplay = formatDateFromDateOnly(deadline);
+    const isOverdue = (() => {
+      if (!deadline) return false;
+      const datePart = String(deadline).includes("T") ? String(deadline).split("T")[0] : String(deadline);
+      const parts = datePart.split("-");
+      if (parts.length !== 3) return false;
+      const [y, m, d] = parts.map(Number);
+      const dt = new Date(y, m - 1, d);
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      return dt.getTime() < todayStart.getTime();
+    })();
+  
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-800">
       <div className="flex justify-between">
@@ -159,12 +196,25 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
             </td>
             <td className="text-gray-800 dark:text-gray-300">{ticketCreatedAt}</td>
           </tr>
+
+          {/* Deadline row */}
+          <tr>
+            <td className={labelStyles}>
+              <LabeledIcon icon={<Calendar className="w-4" />} label="Deadline" />
+            </td>
+            <td className="text-gray-800 dark:text-gray-300">
+              {deadlineDisplay ?? <span className="text-gray-500">None</span>}
+              {isOverdue && <span className="ml-2 text-red-600 font-bold">Overdue</span>}
+            </td>
+          </tr>
+
           <tr>
             <td className={labelStyles}>
               <LabeledIcon icon={<Calendar className="w-4" />} label="Last Modified" />
             </td>
             <td className="text-gray-800 dark:text-gray-300">{ticketUpdatedAt}</td>
           </tr>
+          
         </tbody>
       </table>
     </div>

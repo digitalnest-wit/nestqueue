@@ -17,7 +17,7 @@ export interface TicketCreateProps {
 export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) {
   const { addToast } = useToast();
   const { mutate: createTicket } = useCreateTicket();
-  const [formData, setFormData] = useState<Partial<Ticket>>({
+  const [formData, setFormData] = useState<Partial<Ticket> & { deadline?: string }>({
     status: "Open",
     title: "",
     description: "",
@@ -26,6 +26,7 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
     createdBy: "techsquad@digitalnest.org",
     site: "Watsonville",
     category: "Hardware",
+    deadline: "",
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -167,6 +168,17 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               ))}
             </select>
           </div>
+        </div>
+        {/* Deadline input */}
+        <div className="mb-2">
+          <label className="block mb-1 font-medium">Deadline</label>
+          <input
+            className="w-full rounded border bg-white dark:bg-gray-800 px-3 py-2 text-sm"
+            type="date"
+            name="deadline"
+            value={formData.deadline || ""}
+            onChange={(e) => setFormData((prev) => ({ ...prev, deadline: e.target.value }))}
+          />
         </div>
         <div className="mt-6 flex justify-end gap-3">
           <Button

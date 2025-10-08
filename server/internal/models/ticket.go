@@ -20,6 +20,7 @@ type Ticket struct {
 	Status      string    `json:"status"`
 	CreatedOn   time.Time `json:"createdOn"`
 	UpdatedAt   time.Time `json:"updatedAt"`
+	Deadline    time.Time `json:"deadline"`
 }
 
 // UnmarshalBSON provides a custom unmarshal implementation for Ticket, enabling
@@ -39,6 +40,7 @@ func (t *Ticket) UnmarshalBSON(data []byte) error {
 			Status      string    `json:"status"`
 			CreatedOn   time.Time `json:"createdOn"`
 			UpdatedAt   time.Time `json:"updatedAt"`
+			Deadline    time.Time `json:"deadline"`
 		}
 	)
 	_, _ = buffer.Write(data)
@@ -62,6 +64,7 @@ func (t *Ticket) UnmarshalBSON(data []byte) error {
 		Status:      result.Status,
 		CreatedOn:   result.CreatedOn,
 		UpdatedAt:   result.UpdatedAt,
+		Deadline:    result.Deadline,
 	}
 
 	return nil
