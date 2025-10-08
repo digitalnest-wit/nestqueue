@@ -26,7 +26,6 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
     createdBy: "techsquad@digitalnest.org",
     site: "Watsonville",
     category: "Hardware",
-    deadline: new Date(new Date().setDate(new Date().getDate() + 7)), // Default deadline set to one week from now
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -168,17 +167,6 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
               ))}
             </select>
           </div>
-        </div>
-        {/* Deadline input */}
-        <div className="mb-2">
-          <label className="block mb-1 font-medium">Deadline</label>
-          <input
-            className="w-full rounded border bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-            type="date"
-            name="deadline"
-            value={formData.deadline?.toISOString().split("T")[0] || ""}
-            onChange={(e) => setFormData((prev) => ({ ...prev, deadline: new Date(e.target.value) }))}
-          />
         </div>
         <div className="mt-6 flex justify-end gap-3">
           <Button

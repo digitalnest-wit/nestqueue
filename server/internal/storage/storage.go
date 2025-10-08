@@ -172,10 +172,6 @@ func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[s
 		updatesDoc = append(updatesDoc, bson.E{Key: "updatedAt", Value: time.Now()})
 	}
 
-	if deadline, ok := updates["deadline"].(string); ok {
-		updatesDoc = append(updatesDoc, bson.E{Key: "deadline", Value: deadline})
-	}
-
 	_, err = s.collection.UpdateByID(ctx, objectId, bson.D{{Key: "$set", Value: updatesDoc}})
 	if err != nil {
 		sugar.Error(err)

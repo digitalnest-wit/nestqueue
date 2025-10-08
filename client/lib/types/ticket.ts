@@ -10,7 +10,6 @@ export default interface Ticket {
   status: Status;
   createdOn: Date;
   updatedAt: Date;
-  deadline: Date;
 }
 
 export const Sites = ["Salinas", "Watsonville", "HQ", "Gilroy", "Modesto", "Stockton"] as const;
