@@ -8,6 +8,7 @@ import { useState } from "react";
 import Button from "./button";
 import useAuth from "@/lib/hooks/use-auth";
 import { auth } from "@/firebase/firebase";
+import ThemeToggle from "./theme-toggle";
 
 export default function NavBar() {
   const { user } = useAuth();
@@ -52,19 +53,25 @@ export default function NavBar() {
             </Link>
           </li>
         </ul>
-        {user.photoURL ? (
-          <Image
-            className="rounded-full ml-4 cursor-pointer"
-            src={user.photoURL}
-            alt={"user avatar"}
-            width={40}
-            height={40}
-            onClick={() => auth.signOut()}
-          />
-        ) : (
-          // TODO: Set default profile icon
-          <span>No Image</span>
-        )}
+
+        <div className="flex items-center ml-4 gap-3">
+          {/* Theme toggle */}
+          <ThemeToggle />
+
+          {/* user avatar / sign out */}
+          {user.photoURL ? (
+            <Image
+              className="rounded-full cursor-pointer"
+              src={user.photoURL}
+              alt={"user avatar"}
+              width={40}
+              height={40}
+              onClick={() => auth.signOut()}
+            />
+          ) : (
+            <span className="text-white">No Image</span>
+          )}
+        </div>
       </div>
     </nav>
   );
