@@ -17,7 +17,7 @@ export interface TicketCreateProps {
 export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) {
   const { addToast } = useToast();
   const { mutate: createTicket } = useCreateTicket();
-  const [formData, setFormData] = useState<Partial<Ticket> & { deadline?: string }>({
+  const [formData, setFormData] = useState<Omit<Partial<Ticket>, "deadline"> & { deadline?: string }>({
     status: "Open",
     title: "",
     description: "",
@@ -55,17 +55,25 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
     setIsSaving(true);
 
     try {
-      createTicket(formData, {
-        onSuccess: (ticket) => {
-          onCreate(ticket);
-          addToast("New ticket created successfully!", "Success", 3500);
-        },
-        onError: (err) => {
-          console.error("Error creating ticket:", err);
-          addToast("An unexpected error occurred. Please try again.", "Error", 5000);
-        },
-        onSettled: () => setIsSaving(false),
-      });
+      // Prepare the ticket data, converting deadline string to Date and excluding empty deadline
+            const { deadline, ...rest } = formData;
+            const ticketData: Partial<Ticket> = { ...rest } as Partial<Ticket>;
+      
+            if (deadline && deadline !== "") {
+              ticketData.deadline = new Date(deadline);
+            }
+      
+            createTicket(ticketData, {
+              onSuccess: (ticket) => {
+                onCreate(ticket);
+                addToast("New ticket created successfully!", "Success", 3500);
+              },
+              onError: (err) => {
+                console.error("Error creating ticket:", err);
+                addToast("An unexpected error occurred. Please try again.", "Error", 5000);
+              },
+              onSettled: () => setIsSaving(false),
+            });
     } catch (error) {
       console.error("Unexpected error:", error);
       setIsSaving(false);
@@ -169,12 +177,12 @@ export default function TicketCreate({ onCancel, onCreate }: TicketCreateProps) 
             </select>
           </div>
         </div>
-        {/* Deadline input */}
+        {/* Deadline input with date and time */}
         <div className="mb-2">
-          <label className="block mb-1 font-medium">Deadline</label>
+          <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Deadline (Date & Time)</label>
           <input
-            className="w-full rounded border bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-            type="date"
+            className="w-full rounded border bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-700 dark:text-gray-300"
+            type="datetime-local"
             name="deadline"
             value={formData.deadline || ""}
             onChange={(e) => setFormData((prev) => ({ ...prev, deadline: e.target.value }))}

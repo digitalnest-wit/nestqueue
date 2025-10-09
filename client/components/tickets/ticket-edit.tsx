@@ -20,18 +20,33 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
   const { data: ticket } = useTicket(ticketId);
   const { mutate: updateTicket } = useUpdateTicket();
 
-  const [formData, setFormData] = useState<Partial<Ticket> & { deadline?: string }>(ticket || {});
+  const [formData, setFormData] = useState<Partial<Ticket> & { deadline?: string | Date }>(ticket || {});
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (ticket) {
-      setFormData((prev) => ({
-        ...prev,
-        // normalize deadline to YYYY-MM-DD for the date input
-        constDeadline: undefined,
-        deadline: (ticket as any).deadline ? (String((ticket as any).deadline).includes("T") ? String((ticket as any).deadline).split("T")[0] : String((ticket as any).deadline)) : "",
-        // ...existing fields...
-      }));
+      setFormData((prev) => {
+        // Format deadline for datetime-local input (YYYY-MM-DDTHH:MM)
+        let deadlineString = "";
+        if (ticket.deadline) {
+          const deadlineDate = new Date(ticket.deadline);
+          if (!isNaN(deadlineDate.getTime())) {
+            // Convert to local datetime string format for datetime-local input
+            const year = deadlineDate.getFullYear();
+            const month = String(deadlineDate.getMonth() + 1).padStart(2, '0');
+            const day = String(deadlineDate.getDate()).padStart(2, '0');
+            const hours = String(deadlineDate.getHours()).padStart(2, '0');
+            const minutes = String(deadlineDate.getMinutes()).padStart(2, '0');
+            deadlineString = `${year}-${month}-${day}T${hours}:${minutes}`;
+          }
+        }
+        
+        return {
+          ...prev,
+          ...ticket,
+          deadline: deadlineString,
+        } as Partial<Ticket> & { deadline?: string };
+      });
     }
   }, [ticket]);
 
@@ -78,8 +93,21 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
     setIsSaving(true);
 
     try {
-      updateTicket({ id: ticketId, updates: formData });
-      onSave(formData);
+      // Prepare the updates, converting deadline string to Date if needed
+      const { deadline, ...rest } = formData;
+      const updates: Partial<Ticket> = { ...rest } as Partial<Ticket>;
+      
+      // If deadline is provided as a string, convert it to Date
+      if (deadline && deadline !== "") {
+        if (typeof deadline === "string") {
+          updates.deadline = new Date(deadline);
+        } else {
+          updates.deadline = deadline;
+        }
+      }
+
+      updateTicket({ id: ticketId, updates });
+      onSave(updates);
       addToast("Ticket updated successfully.", "Info", 2500);
     } catch (error) {
       console.error("Error updating ticket:", error);
@@ -196,15 +224,15 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
             </select>
           </div>
         </div>
-        {/* Deadline input in the edit form */}
+        {/* Deadline input with date and time */}
         <div className="mb-4">
-          <label className="block text-sm font-medium">Deadline</label>
+          <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">Deadline (Date & Time)</label>
           <input
-            type="date"
+            type="datetime-local"
             name="deadline"
             value={(formData as any).deadline ?? ""}
             onChange={(e) => setFormData((prev) => ({ ...(prev as any), deadline: e.target.value }))}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-300 rounded-md"
           />
         </div>
         <div className="mt-6 flex justify-end gap-3">

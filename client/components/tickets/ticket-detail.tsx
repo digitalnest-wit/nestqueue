@@ -64,18 +64,40 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
     );
   }
 
-  const ticketCreatedAt = new Date(ticket.createdOn).toDateString();
-  const ticketUpdatedAt = new Date(ticket.updatedAt).toDateString();
+  const ticketCreatedAt = new Date(ticket.createdOn).toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+  const ticketUpdatedAt = new Date(ticket.updatedAt).toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
 
-  // helper: format date-only strings (YYYY-MM-DD) into local date without TZ shift
-  const formatDateFromDateOnly = (raw?: string | null) => {
+  // helper: format datetime strings with both date and time (no seconds)
+  const formatDateTime = (raw?: string | Date | null) => {
     if (!raw) return null;
-    const datePart = String(raw).includes("T") ? String(raw).split("T")[0] : String(raw);
-    const parts = datePart.split("-");
-    if (parts.length !== 3) return null;
-    const [y, m, d] = parts.map((p) => Number(p));
-    const dt = new Date(y, m - 1, d);
-    return dt.toLocaleDateString();
+    try {
+      const date = new Date(raw);
+      if (isNaN(date.getTime())) return null;
+      return date.toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch {
+      return null;
+    }
   };
 
   // screenshot: ensure absolute URL when server returns relative path
@@ -115,21 +137,20 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
   };
 
   // compute deadline display and overdue
-    // ticket may not have the `deadline` property on the inferred Ticket type,
-    // so read it into a local variable with a narrow/known type to avoid TS errors.
-    const deadline = (ticket as any).deadline as string | null | undefined;
-    const deadlineDisplay = formatDateFromDateOnly(deadline);
-    const isOverdue = (() => {
-      if (!deadline) return false;
-      const datePart = String(deadline).includes("T") ? String(deadline).split("T")[0] : String(deadline);
-      const parts = datePart.split("-");
-      if (parts.length !== 3) return false;
-      const [y, m, d] = parts.map(Number);
-      const dt = new Date(y, m - 1, d);
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-      return dt.getTime() < todayStart.getTime();
-    })();
+  // ticket may not have the `deadline` property on the inferred Ticket type,
+  // so read it into a local variable with a narrow/known type to avoid TS errors.
+  const deadline = (ticket as any).deadline as string | Date | null | undefined;
+  const deadlineDisplay = formatDateTime(deadline);
+  const isOverdue = (() => {
+    if (!deadline) return false;
+    try {
+      const deadlineDate = new Date(deadline);
+      const now = new Date();
+      return deadlineDate.getTime() < now.getTime();
+    } catch {
+      return false;
+    }
+  })();
   
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-800">

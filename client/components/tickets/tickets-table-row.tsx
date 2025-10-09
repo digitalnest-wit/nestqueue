@@ -9,7 +9,14 @@ export interface TicketsTableRowProps {
 }
 
 export default function TicketTableRow({ ticket, onClick }: TicketsTableRowProps) {
-  const ticketUpdatedAt = new Date(ticket.updatedAt).toDateString();
+  const ticketUpdatedAt = new Date(ticket.updatedAt).toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
   const columnStyles = "px-4 py-4 text-left text-gray-700 dark:text-gray-300";
 
   let statusStyle: string;

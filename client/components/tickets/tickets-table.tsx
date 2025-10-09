@@ -36,12 +36,35 @@ export default function TicketsTable({ tickets, onClick }: TicketsTableProps) {
 
         <tbody className="divide-y divide-gray-200 dark:divide-gray-900 text-sm">
           {tickets.map((ticket) => {
-            const dateRaw = (ticket as any).deadline;
-            const datePart = dateRaw ? (String(dateRaw).includes("T") ? String(dateRaw).split("T")[0] : String(dateRaw)) : "";
-            const deadlineText = datePart ? (() => {
-              const [y, m, d] = datePart.split("-").map(Number);
-              return new Date(y, m - 1, d).toLocaleDateString();
-            })() : "";
+            // Format deadline with both date and time (no seconds)
+            const deadline = (ticket as any).deadline;
+            const deadlineDisplay = deadline ? (() => {
+              try {
+                const date = new Date(deadline);
+                return isNaN(date.getTime()) ? null : date.toLocaleString(undefined, {
+                  year: 'numeric',
+                  month: 'numeric',
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true
+                });
+              } catch {
+                return null;
+              }
+            })() : null;
+
+            // Check if deadline is overdue
+            const isOverdue = deadline ? (() => {
+              try {
+                const deadlineDate = new Date(deadline);
+                const now = new Date();
+                return deadlineDate.getTime() < now.getTime();
+              } catch {
+                return false;
+              }
+            })() : false;
+
             return (
               <tr key={ticket.id} className="hover:bg-gray-50 dark:hover:bg-gray-700" onClick={() => onClick(ticket)}>
                 <td className={commonStyles}>P{ticket.priority ?? "—"}</td>
@@ -50,23 +73,26 @@ export default function TicketsTable({ tickets, onClick }: TicketsTableProps) {
                 <td className={`${commonStyles} hidden md:table-cell`}>{ticket.assignedTo ?? "—"}</td>
                 <td className={commonStyles}>{ticket.status ?? "—"}</td>
 
-                {/* Deadline cell */}
+                {/* Deadline cell with date and time */}
                 <td className={`${commonStyles} hidden sm:table-cell`}>
-                  {deadlineText ? (
+                  {deadlineDisplay ? (
                     <div className="flex items-center gap-2">
-                      <span>{deadlineText}</span>
-                      {(() => {
-                        if (!datePart) return null;
-                        const [y, m, d] = datePart.split("-").map(Number);
-                        const dt = new Date(y, m - 1, d);
-                        const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
-                        return dt.getTime() < todayStart.getTime() ? <span className="text-xs text-red-600 font-bold">Overdue</span> : null;
-                      })()}
+                      <span>{deadlineDisplay}</span>
+                      {isOverdue && <span className="text-xs text-red-600 font-bold">Overdue</span>}
                     </div>
                   ) : <span className="text-gray-500">—</span>}
                 </td>
 
-                <td className={`${commonStyles} hidden sm:table-cell`}>{ticket.updatedAt ? new Date(ticket.updatedAt).toLocaleString() : "—"}</td>
+                <td className={`${commonStyles} hidden sm:table-cell`}>
+                  {ticket.updatedAt ? new Date(ticket.updatedAt).toLocaleString(undefined, {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                  }) : "—"}
+                </td>
               </tr>
             );
           })}
