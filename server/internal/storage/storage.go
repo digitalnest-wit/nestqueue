@@ -65,6 +65,11 @@ func (s *TicketStore) CreateTicket(ctx context.Context, ticket models.Ticket) (i
 		}
 	)
 
+	// Add deadline if it's provided
+	if ticket.Deadline != nil {
+		doc = append(doc, bson.E{Key: "deadline", Value: *ticket.Deadline})
+	}
+
 	res, err := s.collection.InsertOne(ctx, doc)
 	if err != nil {
 		return "", err
@@ -166,6 +171,25 @@ func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[s
 
 	if status, ok := updates["status"].(string); ok {
 		updatesDoc = append(updatesDoc, bson.E{Key: "status", Value: status})
+	}
+
+	if deadline, ok := updates["deadline"].(string); ok {
+		var parsedDeadline time.Time
+		var err error
+
+		// Try datetime-local format first (YYYY-MM-DDTHH:MM)
+		if parsedDeadline, err = time.Parse("2006-01-02T15:04", deadline); err != nil {
+			// Try date-only format (YYYY-MM-DD)
+			if parsedDeadline, err = time.Parse("2006-01-02", deadline); err != nil {
+				// Try RFC3339 format as fallback
+				if parsedDeadline, err = time.Parse(time.RFC3339, deadline); err != nil {
+					sugar.Debugw("failed to parse deadline", "error", err, "value", deadline)
+					return nil, err
+				}
+			}
+		}
+
+		updatesDoc = append(updatesDoc, bson.E{Key: "deadline", Value: parsedDeadline})
 	}
 
 	if len(updates) > 0 {

@@ -64,8 +64,50 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
     );
   }
 
-  const ticketCreatedAt = new Date(ticket.createdOn).toDateString();
-  const ticketUpdatedAt = new Date(ticket.updatedAt).toDateString();
+  const ticketCreatedAt = new Date(ticket.createdOn).toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+  const ticketUpdatedAt = new Date(ticket.updatedAt).toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+
+  // helper: format datetime strings with both date and time (no seconds)
+  const formatDateTime = (raw?: string | Date | null) => {
+    if (!raw) return null;
+    try {
+      const date = new Date(raw);
+      if (isNaN(date.getTime())) return null;
+      return date.toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch {
+      return null;
+    }
+  };
+
+  // screenshot: ensure absolute URL when server returns relative path
+  const makeScreenshotUrl = (path?: string | null) => {
+    if (!path) return null;
+    if (path.startsWith("http://") || path.startsWith("https://")) return path;
+    const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+    // build with or without trailing slash cleanly
+    return `${base.replace(/\/$/, "")}${path.startsWith("/") ? "" : "/"}${path}`;
+  };
 
   const TicketCreatedBy = ({ createdBy }: { createdBy: string }) => {
     return (
@@ -94,6 +136,22 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
     setTimeout(onUpdate, 300);
   };
 
+  // compute deadline display and overdue
+  // ticket may not have the `deadline` property on the inferred Ticket type,
+  // so read it into a local variable with a narrow/known type to avoid TS errors.
+  const deadline = (ticket as any).deadline as string | Date | null | undefined;
+  const deadlineDisplay = formatDateTime(deadline);
+  const isOverdue = (() => {
+    if (!deadline) return false;
+    try {
+      const deadlineDate = new Date(deadline);
+      const now = new Date();
+      return deadlineDate.getTime() < now.getTime();
+    } catch {
+      return false;
+    }
+  })();
+  
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-800">
       <div className="flex justify-between">
@@ -159,12 +217,25 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
             </td>
             <td className="text-gray-800 dark:text-gray-300">{ticketCreatedAt}</td>
           </tr>
+
+          {/* Deadline row */}
+          <tr>
+            <td className={labelStyles}>
+              <LabeledIcon icon={<Calendar className="w-4" />} label="Deadline" />
+            </td>
+            <td className="text-gray-800 dark:text-gray-300">
+              {deadlineDisplay ?? <span className="text-gray-500">None</span>}
+              {isOverdue && <span className="ml-2 text-red-600 font-bold">Overdue</span>}
+            </td>
+          </tr>
+
           <tr>
             <td className={labelStyles}>
               <LabeledIcon icon={<Calendar className="w-4" />} label="Last Modified" />
             </td>
             <td className="text-gray-800 dark:text-gray-300">{ticketUpdatedAt}</td>
           </tr>
+          
         </tbody>
       </table>
     </div>

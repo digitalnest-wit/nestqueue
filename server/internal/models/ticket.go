@@ -9,17 +9,18 @@ import (
 
 // Ticket represents an IT ticket with associated metadata
 type Ticket struct {
-	ID          string    `json:"id" bson:"_id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Site        string    `json:"site"`
-	Category    string    `json:"category"`
-	AssignedTo  string    `json:"assignedTo"`
-	CreatedBy   string    `json:"createdBy"`
-	Priority    int       `json:"priority"`
-	Status      string    `json:"status"`
-	CreatedOn   time.Time `json:"createdOn"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	ID          string     `json:"id" bson:"_id"`
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	Site        string     `json:"site"`
+	Category    string     `json:"category"`
+	AssignedTo  string     `json:"assignedTo"`
+	CreatedBy   string     `json:"createdBy"`
+	Priority    int        `json:"priority"`
+	Status      string     `json:"status"`
+	CreatedOn   time.Time  `json:"createdOn"`
+	UpdatedAt   time.Time  `json:"updatedAt"`
+	Deadline    *time.Time `json:"deadline,omitempty"`
 }
 
 // UnmarshalBSON provides a custom unmarshal implementation for Ticket, enabling
@@ -28,17 +29,18 @@ func (t *Ticket) UnmarshalBSON(data []byte) error {
 	var (
 		buffer bytes.Buffer
 		result struct {
-			ID          string    `json:"id" bson:"_id"`
-			Title       string    `json:"title"`
-			Description string    `json:"description"`
-			Site        string    `json:"site"`
-			Category    string    `json:"category"`
-			AssignedTo  string    `json:"assignedTo"`
-			CreatedBy   string    `json:"createdBy"`
-			Priority    int       `json:"priority"`
-			Status      string    `json:"status"`
-			CreatedOn   time.Time `json:"createdOn"`
-			UpdatedAt   time.Time `json:"updatedAt"`
+			ID          string     `json:"id" bson:"_id"`
+			Title       string     `json:"title"`
+			Description string     `json:"description"`
+			Site        string     `json:"site"`
+			Category    string     `json:"category"`
+			AssignedTo  string     `json:"assignedTo"`
+			CreatedBy   string     `json:"createdBy"`
+			Priority    int        `json:"priority"`
+			Status      string     `json:"status"`
+			CreatedOn   time.Time  `json:"createdOn"`
+			UpdatedAt   time.Time  `json:"updatedAt"`
+			Deadline    *time.Time `json:"deadline,omitempty"`
 		}
 	)
 	_, _ = buffer.Write(data)
@@ -62,6 +64,7 @@ func (t *Ticket) UnmarshalBSON(data []byte) error {
 		Status:      result.Status,
 		CreatedOn:   result.CreatedOn,
 		UpdatedAt:   result.UpdatedAt,
+		Deadline:    result.Deadline,
 	}
 
 	return nil
