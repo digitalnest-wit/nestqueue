@@ -43,6 +43,7 @@ func (h *TicketHandler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/tickets", h.handleGetTickets)
 	mux.HandleFunc("GET /api/v1/tickets/{id}", h.handleGetTicket)
 	mux.HandleFunc("PUT /api/v1/tickets/{id}", h.handleUpdateTicket)
+	mux.HandleFunc("POST /api/v1/tickets/{id}/complete", h.handleCompleteTicket)
 	mux.HandleFunc("DELETE /api/v1/tickets/{id}", h.handleDeleteTicket)
 }
 
@@ -162,6 +163,41 @@ func (h *TicketHandler) handleUpdateTicket(w http.ResponseWriter, r *http.Reques
 
 		return
 	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), _databaseTimeoutPolicy)
+	defer cancel()
+
+	ticket, err := h.store.UpdateTicket(ctx, ticketId, updates)
+	if err != nil {
+		switch {
+		case errors.Is(err, storage.ErrTicketNotFound):
+			sugar.Debug(err)
+			http.Error(w, err.Error(), http.StatusNotFound)
+
+			return
+		default:
+			sugar.Error(err)
+			http.Error(w, errInternal.Error(), http.StatusInternalServerError)
+
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	encodeJSON(h, w, ticket)
+}
+
+// handleCompleteTicket handles marking a ticket as completed (closed)
+func (h *TicketHandler) handleCompleteTicket(w http.ResponseWriter, r *http.Request) {
+	var (
+		ticketId = r.PathValue("id")
+		updates  = map[string]any{
+			"status":    "Closed",
+			"updatedAt": time.Now(),
+		}
+		sugar = h.logger.Sugar()
+	)
 
 	ctx, cancel := context.WithTimeout(context.Background(), _databaseTimeoutPolicy)
 	defer cancel()

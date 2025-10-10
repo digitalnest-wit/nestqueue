@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Building, Calendar, PencilLine, SquareArrowUpRight, Tag, User } from "lucide-react";
+import { Building, Calendar, FileText, PencilLine, SquareArrowUpRight, Tag, User, BookOpen } from "lucide-react";
 import { MouseEvent, useEffect, useState } from "react";
 
 import TicketAssignedTo from "./ticket-assigned-to";
 import TicketEdit from "./ticket-edit";
+import TicketCompleteModal from "./ticket-complete-modal";
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
 import { Status, Statuses } from "@/lib/types/ticket";
 import Button from "../ui/button";
@@ -23,6 +24,8 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
   const { mutate: updateTicket } = useUpdateTicket();
   const [status, setStatus] = useState<Status>("Active");
   const [isEditing, setIsEditing] = useState(false);
+  const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   useEffect(() => {
     if (ticket) {
@@ -58,7 +61,7 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
         onSave={(updates) => {
           setIsEditing(false);
           updateTicket({ id: ticketId, updates });
-          setTimeout(onUpdate, 300);
+          onUpdate(); // Call immediately since cache is updated
         }}
       />
     );
@@ -91,7 +94,35 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
 
     setStatus(updatedStatus);
     updateTicket({ id: ticketId, updates: { status: updatedStatus } });
-    setTimeout(onUpdate, 300);
+    onUpdate(); // Call immediately since cache is updated
+  };
+
+  const handleCompleteTicket = () => {
+    setIsCompletionModalOpen(true);
+  };
+
+  const handleCompleteWithDocumentation = (documentation: string) => {
+    setIsCompleting(true);
+    
+    // Use updateTicket instead of completeTicket to set both status and documentation
+    updateTicket({ 
+      id: ticketId, 
+      updates: { 
+        status: "Closed",
+        documentation: documentation
+      } 
+    }, {
+      onSuccess: (updatedTicket) => {
+        setStatus("Closed");
+        setIsCompletionModalOpen(false);
+        setIsCompleting(false);
+        onUpdate(); // Call immediately since cache is updated
+      },
+      onError: (error) => {
+        console.error('Error updating ticket:', error);
+        setIsCompleting(false);
+      },
+    });
   };
 
   return (
@@ -103,12 +134,22 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
         >
           &lt;-
         </Button>
-        <Button
-          className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-white rounded"
-          onClick={() => setIsEditing(true)}
-        >
-          <LabeledIcon icon={<PencilLine className="w-4" />} label="Edit" />
-        </Button>
+        <div className="flex gap-2">
+          {ticket.status !== "Closed" && (
+            <Button
+              className="bg-green-600 hover:bg-green-700 text-white rounded px-4 py-2 font-medium"
+              onClick={handleCompleteTicket}
+            >
+              Complete Ticket
+            </Button>
+          )}
+          <Button
+            className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-white rounded"
+            onClick={() => setIsEditing(true)}
+          >
+            <LabeledIcon icon={<PencilLine className="w-4" />} label="Edit" />
+          </Button>
+        </div>
       </div>
       <p className="mt-3 mb-1 text-sm text-gray-600 dark:text-gray-500">TK {ticket.id}</p>
       <div className="flex gap-5 items-center">
@@ -122,7 +163,33 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
         </Dropdown>
         <p className="text-xl font-bold text-gray-800 dark:text-gray-300">{ticket.title}</p>
       </div>
-      <p className="my-4 text-gray-800 dark:text-gray-300">{ticket.description}</p>
+      
+      {/* Description Section */}
+      <div className="my-6">
+        <div className="mb-2">
+          <LabeledIcon icon={<FileText className="w-5" />} label="Description" />
+        </div>
+        <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <p className="text-gray-800 dark:text-gray-300 whitespace-pre-wrap">
+            {ticket.description || "No description provided."}
+          </p>
+        </div>
+      </div>
+
+      {/* Documentation Section */}
+      <div className="my-6">
+        <div className="mb-2">
+          <LabeledIcon icon={<BookOpen className="w-5" />} label="Resolution Documentation" />
+        </div>
+        <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <p className="text-gray-800 dark:text-gray-300 whitespace-pre-wrap">
+            {ticket.documentation && ticket.documentation.trim() 
+              ? ticket.documentation 
+              : "No resolution documentation provided yet."}
+          </p>
+        </div>
+      </div>
+
       <table className="table-auto min-w-full">
         <tbody>
           <tr>
@@ -167,6 +234,16 @@ export default function TicketDetail({ ticketId, onDismiss, onUpdate }: TicketDe
           </tr>
         </tbody>
       </table>
+
+      {/* Completion Modal */}
+      <TicketCompleteModal
+        isOpen={isCompletionModalOpen}
+        ticketTitle={ticket.title}
+        existingDocumentation={ticket.documentation || ""}
+        onClose={() => setIsCompletionModalOpen(false)}
+        onComplete={handleCompleteWithDocumentation}
+        isLoading={isCompleting}
+      />
     </div>
   );
 }
