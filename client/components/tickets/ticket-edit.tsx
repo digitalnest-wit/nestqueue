@@ -1,7 +1,7 @@
 "use client";
 
-import { Building, Tag, User } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { BookOpen, Building, Tag, User } from "lucide-react";
+import { FormEvent, useState, useEffect } from "react";
 
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
 import { useToast } from "@/lib/hooks/use-toast";
@@ -20,8 +20,15 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
   const { data: ticket } = useTicket(ticketId);
   const { mutate: updateTicket } = useUpdateTicket();
 
-  const [formData, setFormData] = useState<Partial<Ticket>>(ticket || {});
+  const [formData, setFormData] = useState<Partial<Ticket>>({});
   const [isSaving, setIsSaving] = useState(false);
+
+  // Update form data when ticket data loads/changes
+  useEffect(() => {
+    if (ticket) {
+      setFormData(ticket);
+    }
+  }, [ticket]);
 
   if (!ticket) {
     let layout = <></>;
@@ -95,7 +102,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
         <p className="mb-2 text-sm text-gray-600 dark:text-gray-500">TK {ticket.id}</p>
         <div className="mb-4">
           <label className={`block ${labelStyle}`}>Status</label>
-          <select name="status" value={formData.status || ticket.status} onChange={handleChange} className={inputStyles}>
+          <select name="status" value={formData.status || ""} onChange={handleChange} className={inputStyles}>
             {Statuses.map((status) => (
               <option key={status} value={status}>
                 {status}
@@ -107,7 +114,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
           <label className={`block ${labelStyle}`}>Priority</label>
           <select
             name="priority"
-            value={formData.priority || ticket.priority}
+            value={formData.priority || ""}
             onChange={handleChange}
             className={inputStyles}
             required
@@ -127,7 +134,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
           <input
             type="text"
             name="title"
-            value={formData.title}
+            value={formData.title || ""}
             placeholder="Enter a title"
             onChange={handleChange}
             className={inputStyles}
@@ -138,8 +145,21 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
           <label className={`block ${labelStyle}`}>Description</label>
           <textarea
             name="description"
-            value={formData.description}
+            value={formData.description || ""}
             placeholder="A descriptive ticket makes a good ticket."
+            onChange={handleChange}
+            className={inputStyles}
+            rows={4}
+          />
+        </div>
+        <div className="mb-4">
+          <label className={`flex items-center ${labelStyle}`}>
+            <LabeledIcon className="mr-1" icon={<BookOpen className="w-4" />} label="Resolution Documentation" />
+          </label>
+          <textarea
+            name="documentation"
+            value={formData.documentation || ""}
+            placeholder="Document how this ticket was resolved, steps taken, solutions applied, etc."
             onChange={handleChange}
             className={inputStyles}
             rows={4}
@@ -153,7 +173,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
             <input
               type="text"
               name="assignedTo"
-              value={formData.assignedTo}
+              value={formData.assignedTo || ""}
               placeholder="Unassigned"
               onChange={handleChange}
               className={inputStyles}
@@ -163,7 +183,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
             <label className={`flex items-center ${labelStyle}`}>
               <LabeledIcon className="mr-1" icon={<Building className="w-4" />} label="Site" />
             </label>
-            <select name="site" value={formData.site || ticket.site} onChange={handleChange} className={inputStyles}>
+            <select name="site" value={formData.site || ""} onChange={handleChange} className={inputStyles}>
               {Sites.map((site) => (
                 <option key={site} value={site}>
                   {site}
@@ -175,7 +195,7 @@ export default function TicketEdit({ ticketId, onCancel, onSave }: TicketEditPro
             <label className={`flex items-center ${labelStyle}`}>
               <LabeledIcon className="mr-1" icon={<Tag className="w-4" />} label="Category" />
             </label>
-            <select name="category" value={formData.category || ticket.category} onChange={handleChange} className={inputStyles}>
+            <select name="category" value={formData.category || ""} onChange={handleChange} className={inputStyles}>
               {Categories.map((category) => (
                 <option key={category} value={category}>
                   {category}

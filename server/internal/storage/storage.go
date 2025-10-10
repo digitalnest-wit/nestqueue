@@ -54,6 +54,7 @@ func (s *TicketStore) CreateTicket(ctx context.Context, ticket models.Ticket) (i
 		doc   = bson.D{
 			{Key: "title", Value: ticket.Title},
 			{Key: "description", Value: ticket.Description},
+			{Key: "documentation", Value: ticket.Documentation},
 			{Key: "site", Value: ticket.Site},
 			{Key: "category", Value: ticket.Category},
 			{Key: "assignedTo", Value: ticket.AssignedTo},
@@ -146,6 +147,10 @@ func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[s
 
 	if description, ok := updates["description"].(string); ok {
 		updatesDoc = append(updatesDoc, bson.E{Key: "description", Value: description})
+	}
+
+	if documentation, ok := updates["documentation"].(string); ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "documentation", Value: documentation})
 	}
 
 	if site, ok := updates["site"].(string); ok {

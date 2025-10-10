@@ -20,3 +20,8 @@ export async function updateTicket(id: string, updates: Partial<Ticket>) {
   const { data: updatedTicket } = await server.put<Ticket>(`/tickets/${id}`, updates);
   return updatedTicket;
 }
+
+export async function completeTicket(id: string) {
+  const { data: completedTicket } = await server.post<Ticket>(`/tickets/${id}/complete`);
+  return completedTicket;
+}

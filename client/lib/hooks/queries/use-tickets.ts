@@ -1,4 +1,4 @@
-import { createTicket, getTicket, getTickets, updateTicket } from "@/lib/api/tickets";
+import { completeTicket, createTicket, getTicket, getTickets, updateTicket } from "@/lib/api/tickets";
 import Ticket from "@/lib/types/ticket";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -39,6 +39,20 @@ export const useUpdateTicket = () => {
 
   return useMutation<Ticket, Error, { id: string; updates: Partial<Ticket> }>({
     mutationFn: ({ id, updates }) => updateTicket(id, updates),
+    onSuccess: (updatedTicket, variables) => {
+      // Update the individual ticket cache with the fresh data
+      client.setQueryData(["tickets", variables.id], updatedTicket);
+      // Invalidate the tickets list to refresh it as well
+      client.invalidateQueries({ queryKey: ["tickets"], exact: false });
+    },
+  });
+};
+
+export const useCompleteTicket = () => {
+  const client = useQueryClient();
+
+  return useMutation<Ticket, Error, string>({
+    mutationFn: (id) => completeTicket(id),
     onSuccess: () => client.invalidateQueries({ queryKey: ["tickets"] }),
   });
 };
