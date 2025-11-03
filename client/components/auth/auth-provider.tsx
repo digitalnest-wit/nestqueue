@@ -9,6 +9,11 @@ export const AuthProvider = ({ children }: { children: Readonly<React.ReactNode>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -18,12 +23,12 @@ export const AuthProvider = ({ children }: { children: Readonly<React.ReactNode>
   }, []);
 
   if (loading) {
-  return (
-    <div className="flex items-center justify-center h-screen w-screen">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-emerald-500"></div>
-    </div>
-  );
-}
+    return (
+      <div className="flex items-center justify-center h-screen w-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-emerald-500"></div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ user }}>
@@ -31,3 +36,4 @@ export const AuthProvider = ({ children }: { children: Readonly<React.ReactNode>
     </AuthContext.Provider>
   );
 };
+
