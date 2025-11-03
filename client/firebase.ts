@@ -1,7 +1,8 @@
 // lib/firebase.ts
-import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
+// Firebase config (always defined from environment variables)
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
@@ -11,9 +12,11 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 
-// ✅ Works on both client + SSR
-const app: FirebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
+// ✅ Initialize once, works for SSR & client
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
+// ✅ Always defined, no more "undefined" type
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
+
 
