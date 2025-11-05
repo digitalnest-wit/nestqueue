@@ -7,14 +7,14 @@ This serverless API provides endpoints for managing tickets in a MongoDB Atlas d
 ### 1. MongoDB Atlas Configuration
 
 1. Create a MongoDB Atlas account and cluster
-2. Create a database named `nestqueue`
+2. Create a database named `nq_tickets`
 3. Create a collection named `tickets`
 4. Get your connection string from MongoDB Atlas
 5. Update the `MONGODB_URI` in your `.env` file:
 
 ```
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/nestqueue?retryWrites=true&w=majority
-MONGODB_DB=nestqueue
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/nq_tickets?retryWrites=true&w=majority
+MONGODB_DB=nq_tickets
 ```
 
 ### 2. API Endpoints

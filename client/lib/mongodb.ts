@@ -39,5 +39,5 @@ export default getMongoClient;
 
 export async function getDatabase(): Promise<Db> {
   const client = await getMongoClient();
-  return client.db(process.env.MONGODB_DB || 'nestqueue');
+  return client.db(process.env.MONGODB_DB || 'nq_tickets');
 }
