@@ -1,5 +1,6 @@
-import { createTicket, getTicket, getTickets, updateTicket } from "@/lib/api/tickets";
+import { createTicket, getTicket, getTickets, updateTicket, deleteTicket } from "@/lib/api/tickets";
 import Ticket from "@/lib/types/ticket";
+import { CreateTicketRequest } from "@/lib/types/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type FilterKey = "Priority" | "Category" | "Title" | "Assigned To" | "Status" | "Last Modified";
@@ -28,7 +29,7 @@ export const useTicket = (id: string) =>
 export const useCreateTicket = () => {
   const client = useQueryClient();
 
-  return useMutation<Ticket, Error, Partial<Ticket>>({
+  return useMutation<Ticket, Error, CreateTicketRequest>({
     mutationFn: (ticket) => createTicket(ticket),
     onSuccess: () => client.invalidateQueries({ queryKey: ["tickets"] }),
   });
@@ -39,6 +40,15 @@ export const useUpdateTicket = () => {
 
   return useMutation<Ticket, Error, { id: string; updates: Partial<Ticket> }>({
     mutationFn: ({ id, updates }) => updateTicket(id, updates),
+    onSuccess: () => client.invalidateQueries({ queryKey: ["tickets"] }),
+  });
+};
+
+export const useDeleteTicket = () => {
+  const client = useQueryClient();
+
+  return useMutation<void, Error, string>({
+    mutationFn: (id) => deleteTicket(id),
     onSuccess: () => client.invalidateQueries({ queryKey: ["tickets"] }),
   });
 };

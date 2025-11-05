@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/hooks/use-auth";
 
 import OtherUser from "@/components/userinfo/OtherUser";
 import Profile from "@/components/userinfo/Profile";
 
 export default function UserPage() {
+  const { user } = useAuth();
+  
   type RelatedUser = {
     name: string;
     title: string;
@@ -31,10 +34,20 @@ export default function UserPage() {
   useEffect(() => {
     fetch("/dummy-data.json")
       .then((res) => res.json())
-      .then((json) => setData(json));
-  }, []);
+      .then((json) => {
+        // Merge dummy data with authenticated user info
+        const userData = {
+          ...json,
+          name: user?.displayName || user?.email || json.name,
+          email: user?.email || json.email,
+          avatar: user?.photoURL || json.avatar,
+          role: json.role || "Member",
+        };
+        setData(userData);
+      });
+  }, [user]);
 
-  if (!data) {
+  if (!data || !user) {
     return <div>Loading...</div>;
   }
 

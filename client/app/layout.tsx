@@ -21,7 +21,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning={true}>
         <AuthProvider>
           <ThemeApplicator />
           <ThemeProvider>
