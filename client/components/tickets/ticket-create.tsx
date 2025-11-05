@@ -3,7 +3,6 @@
 import { useState, FormEvent } from "react";
 import {
   Building,
-  Check,
   ChevronsUp,
   LetterTextIcon,
   Tag,
@@ -17,10 +16,9 @@ import Ticket, {
   Categories,
   Priority,
   Sites,
-  Status,
   Priorities,
-  Statuses,
 } from "@/lib/types/ticket";
+import { CreateTicketRequest } from "@/lib/types/api";
 import Button from "../ui/button";
 import FormTextInput from "../ui/form-input";
 import FormSelectInput from "../ui/form-select";
@@ -38,8 +36,7 @@ type FormInputElement =
 export default function TicketCreate({ onDismiss }: TicketCreateProps) {
   const { addToast } = useToast();
   const { mutate: createTicket } = useCreateTicket();
-  const [formData, setFormData] = useState<Partial<Ticket>>({
-    status: "Open",
+  const [formData, setFormData] = useState<CreateTicketRequest>({
     title: "",
     description: "",
     assignedTo: "",
@@ -113,14 +110,6 @@ export default function TicketCreate({ onDismiss }: TicketCreateProps) {
           required
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
-          <FormSelectInput
-            className="mb-2"
-            icon={<Check width={16} />}
-            label="Status"
-            value={formData.status}
-            options={Statuses}
-            onChange={handleFormChanged}
-          />
           <FormSelectInput
             className="mb-2"
             icon={<ChevronsUp width={16} />}
