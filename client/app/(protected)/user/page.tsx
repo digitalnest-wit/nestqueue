@@ -7,6 +7,17 @@ import OtherUser from "@/components/userinfo/OtherUser";
 import Profile from "@/components/userinfo/Profile";
 
 export default function UserPage() {
+  return (
+    <main className="flex flex-col items-center justify-center h-100vh">
+      <h1 className="text-2xl font-bold mb-4">User Page</h1>
+      <p className="text-center text-gray-600">
+        The user profile page is currently under maintenance. Please check back later.
+      </p>
+    </main>
+  );
+}
+
+/*export default function UserPage() {
   const { user } = useAuth();
   
   type RelatedUser = {
@@ -83,4 +94,4 @@ export default function UserPage() {
       </section>
     </main>
   );
-}
+}*/
