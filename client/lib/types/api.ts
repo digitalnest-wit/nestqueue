@@ -1,5 +1,5 @@
 // API Response types for the ticketing system
-import { Site, Category, Priority, Status } from "@/lib/types/ticket";
+import { Site, Category, Priority, Status, TroubleshootingDetails } from "@/lib/types/ticket";
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -23,6 +23,7 @@ export interface TicketResponse {
   assignedTo?: string;
   createdBy: string;
   priority: Priority;
+  troubleshooting?: TroubleshootingDetails;
   createdOn: Date;
   updatedAt: Date;
 }
@@ -35,6 +36,7 @@ export interface CreateTicketRequest {
   assignedTo?: string;
   createdBy: string;
   priority: Priority;
+  troubleshooting?: TroubleshootingDetails;
 }
 
 export interface CreateTicketResponse extends ApiResponse {

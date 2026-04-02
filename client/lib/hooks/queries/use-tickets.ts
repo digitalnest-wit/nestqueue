@@ -40,7 +40,10 @@ export const useUpdateTicket = () => {
 
   return useMutation<Ticket, Error, { id: string; updates: Partial<Ticket> }>({
     mutationFn: ({ id, updates }) => updateTicket(id, updates),
-    onSuccess: () => client.invalidateQueries({ queryKey: ["tickets"] }),
+    onSuccess: (_data, variables) => {
+      client.invalidateQueries({ queryKey: ["tickets"] });
+      client.invalidateQueries({ queryKey: ["tickets", variables.id] });
+    },
   });
 };
 

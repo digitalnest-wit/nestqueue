@@ -1,6 +1,13 @@
 import server from "./client";
-import Ticket from "@/lib/types/ticket";
+import Ticket, { TroubleshootingDetails, createEmptyTroubleshootingDetails } from "@/lib/types/ticket";
 import { TicketsListResponse, CreateTicketRequest, CreateTicketResponse, SingleTicketResponse, UpdateTicketResponse } from "@/lib/types/api";
+
+const normalizeTroubleshooting = (
+  details?: Partial<TroubleshootingDetails> | null
+): TroubleshootingDetails => ({
+  ...createEmptyTroubleshootingDetails(),
+  ...details,
+});
 
 export async function getTickets(query: string = ""): Promise<Ticket[]> {
   try {
@@ -15,6 +22,7 @@ export async function getTickets(query: string = ""): Promise<Ticket[]> {
     // Transform TicketResponse to Ticket (they should be compatible now)
     return data.tickets.map(ticket => ({
       ...ticket,
+      troubleshooting: normalizeTroubleshooting(ticket.troubleshooting),
       // Ensure dates are Date objects
       createdOn: new Date(ticket.createdOn),
       updatedAt: new Date(ticket.updatedAt)
@@ -37,6 +45,7 @@ export async function getTicket(id: string): Promise<Ticket> {
     // Transform to Ticket with proper date objects
     return {
       ...data.ticket,
+      troubleshooting: normalizeTroubleshooting(data.ticket.troubleshooting),
       createdOn: new Date(data.ticket.createdOn),
       updatedAt: new Date(data.ticket.updatedAt)
     };
@@ -48,12 +57,17 @@ export async function getTicket(id: string): Promise<Ticket> {
 
 export async function createTicket(ticketData: CreateTicketRequest): Promise<Ticket> {
   try {
+    const payload = {
+      ...ticketData,
+      troubleshooting: normalizeTroubleshooting(ticketData.troubleshooting),
+    };
+
     const response = await fetch('/api/tickets', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(ticketData),
+      body: JSON.stringify(payload),
     });
     
     const data: CreateTicketResponse = await response.json();
@@ -65,6 +79,7 @@ export async function createTicket(ticketData: CreateTicketRequest): Promise<Tic
     // Transform to Ticket with proper date objects
     return {
       ...data.ticket,
+      troubleshooting: normalizeTroubleshooting(data.ticket.troubleshooting),
       createdOn: new Date(data.ticket.createdOn),
       updatedAt: new Date(data.ticket.updatedAt)
     };
@@ -76,12 +91,16 @@ export async function createTicket(ticketData: CreateTicketRequest): Promise<Tic
 
 export async function updateTicket(id: string, updates: Partial<Ticket>): Promise<Ticket> {
   try {
+    const payload: Partial<Ticket> = updates.troubleshooting
+      ? { ...updates, troubleshooting: normalizeTroubleshooting(updates.troubleshooting) }
+      : updates;
+
     const response = await fetch(`/api/tickets/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(updates),
+      body: JSON.stringify(payload),
     });
     
     const data: UpdateTicketResponse = await response.json();
@@ -93,6 +112,7 @@ export async function updateTicket(id: string, updates: Partial<Ticket>): Promis
     // Transform to Ticket with proper date objects
     return {
       ...data.ticket,
+      troubleshooting: normalizeTroubleshooting(data.ticket.troubleshooting),
       createdOn: new Date(data.ticket.createdOn),
       updatedAt: new Date(data.ticket.updatedAt)
     };

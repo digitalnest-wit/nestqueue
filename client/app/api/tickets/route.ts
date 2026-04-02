@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
-import { Site, Category, Priority, Status, Sites, Categories, Priorities, Statuses } from '@/lib/types/ticket';
+import { Site, Category, Priority, Status, Sites, Categories, Priorities, Statuses, TroubleshootingDetails, createEmptyTroubleshootingDetails } from '@/lib/types/ticket';
 
 // Define the ticket interface for type safety
 interface TicketDocument {
@@ -16,7 +16,15 @@ interface TicketDocument {
   priority: Priority;
   createdOn: Date;
   updatedAt: Date;
+  troubleshooting?: TroubleshootingDetails;
 }
+
+const normalizeTroubleshooting = (
+  details?: Partial<TroubleshootingDetails> | null
+): TroubleshootingDetails => ({
+  ...createEmptyTroubleshootingDetails(),
+  ...details,
+});
 
 // GET /api/tickets - Retrieve all tickets
 export async function GET(request: NextRequest) {
@@ -49,6 +57,7 @@ export async function GET(request: NextRequest) {
     // Transform _id to id for frontend compatibility
     const transformedTickets = tickets.map(ticket => ({
       ...ticket,
+      troubleshooting: normalizeTroubleshooting(ticket.troubleshooting),
       id: ticket._id?.toString(),
       _id: undefined
     }));
@@ -77,7 +86,7 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { title, description, site, category, assignedTo, createdBy, priority } = body;
+    const { title, description, site, category, assignedTo, createdBy, priority, troubleshooting } = body;
 
     // Validate required fields
     if (!title || !description || !site || !category || !createdBy || priority === undefined) {
@@ -123,6 +132,7 @@ export async function POST(request: NextRequest) {
       assignedTo: assignedTo || undefined,
       createdBy: createdBy.trim(),
       priority: priority as Priority,
+      troubleshooting: normalizeTroubleshooting(troubleshooting),
       createdOn: new Date(),
       updatedAt: new Date()
     };
@@ -144,6 +154,7 @@ export async function POST(request: NextRequest) {
     // Transform for frontend compatibility
     const responseTicket = {
       ...createdTicket,
+      troubleshooting: normalizeTroubleshooting(createdTicket.troubleshooting),
       id: createdTicket._id?.toString(),
       _id: undefined
     };

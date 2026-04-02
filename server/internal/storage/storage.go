@@ -60,6 +60,7 @@ func (s *TicketStore) CreateTicket(ctx context.Context, ticket models.Ticket) (i
 			{Key: "createdBy", Value: ticket.CreatedBy},
 			{Key: "priority", Value: ticket.Priority},
 			{Key: "status", Value: ticket.Status},
+			{Key: "troubleshooting", Value: ticket.Troubleshooting},
 			{Key: "createdOn", Value: now},
 			{Key: "updatedAt", Value: now},
 		}
@@ -166,6 +167,10 @@ func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[s
 
 	if status, ok := updates["status"].(string); ok {
 		updatesDoc = append(updatesDoc, bson.E{Key: "status", Value: status})
+	}
+
+	if troubleshooting, ok := updates["troubleshooting"].(map[string]any); ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "troubleshooting", Value: troubleshooting})
 	}
 
 	if len(updates) > 0 {

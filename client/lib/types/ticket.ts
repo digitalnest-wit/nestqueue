@@ -1,3 +1,21 @@
+export interface TroubleshootingDetails {
+  initialObservation: string;
+  stepsTaken: string;
+  rootCause: string;
+  solutionsApplied: string;
+  verification: string;
+  finalNotes: string;
+}
+
+export const createEmptyTroubleshootingDetails = (): TroubleshootingDetails => ({
+  initialObservation: "",
+  stepsTaken: "",
+  rootCause: "",
+  solutionsApplied: "",
+  verification: "",
+  finalNotes: "",
+});
+
 export default interface Ticket {
   id: string;
   title: string;
@@ -8,6 +26,7 @@ export default interface Ticket {
   createdBy: string;
   priority: Priority;
   status: Status;
+  troubleshooting: TroubleshootingDetails;
   createdOn: Date;
   updatedAt: Date;
 }

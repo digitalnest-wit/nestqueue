@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
-import { Site, Category, Priority, Status } from '@/lib/types/ticket';
+import { Site, Category, Priority, Status, TroubleshootingDetails, createEmptyTroubleshootingDetails } from '@/lib/types/ticket';
 
 // Define the ticket interface for type safety
 interface TicketDocument {
@@ -16,7 +16,15 @@ interface TicketDocument {
   priority: Priority;
   createdOn: Date;
   updatedAt: Date;
+  troubleshooting?: TroubleshootingDetails;
 }
+
+const normalizeTroubleshooting = (
+  details?: Partial<TroubleshootingDetails> | null
+): TroubleshootingDetails => ({
+  ...createEmptyTroubleshootingDetails(),
+  ...details,
+});
 
 // GET /api/tickets/[id] - Retrieve a specific ticket
 export async function GET(
@@ -52,6 +60,7 @@ export async function GET(
     // Transform _id to id for frontend compatibility
     const transformedTicket = {
       ...ticket,
+      troubleshooting: normalizeTroubleshooting(ticket.troubleshooting),
       id: ticket._id?.toString(),
       _id: undefined
     };
@@ -94,6 +103,10 @@ export async function PUT(
     // Parse request body
     const updates = await request.json();
 
+    if (updates.troubleshooting) {
+      updates.troubleshooting = normalizeTroubleshooting(updates.troubleshooting);
+    }
+
     // Remove id and _id from updates if present
     delete updates.id;
     delete updates._id;
@@ -119,6 +132,7 @@ export async function PUT(
     // Transform for frontend compatibility
     const transformedTicket = {
       ...result,
+      troubleshooting: normalizeTroubleshooting(result.troubleshooting),
       id: result._id?.toString(),
       _id: undefined
     };
