@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: var(--color-gray-100);
@@ -12,19 +13,24 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: var(--color-gray-900);
-    --foreground: var(--color-gray-100);
-  }
+.dark {
+  --background: var(--color-gray-900);
+  --foreground: var(--color-gray-100);
 }
 
 body {
-  background-image: url(/Dnest-bg3.png);
-  background-size: cover;
+  background:
+    radial-gradient(circle at top left, rgba(22, 163, 74, 0.08), transparent 28%),
+    linear-gradient(180deg, #f8fbf8 0%, #eef3f9 100%);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   overscroll-behavior: none;
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at top left, rgba(22, 163, 74, 0.12), transparent 24%),
+    linear-gradient(180deg, #0b1220 0%, #111827 100%);
 }
 
 @layer utilities {

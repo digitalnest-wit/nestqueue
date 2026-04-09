@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
-import { Site, Category, Priority, Status } from '@/lib/types/ticket';
+import {
+  Category,
+  Priority,
+  Site,
+  Status,
+  TicketActivityLogEntry,
+  TicketDocumentation,
+  TicketEscalation,
+  TicketInstructorReview,
+  WorkflowStatus,
+} from '@/lib/types/ticket';
 
 // Define the ticket interface for type safety
 interface TicketDocument {
@@ -9,13 +19,71 @@ interface TicketDocument {
   title: string;
   description: string;
   status: Status;
+  workflowStatus: WorkflowStatus;
   site: Site;
   category: Category;
   assignedTo?: string;
   createdBy: string;
   priority: Priority;
+  deviceId?: string;
+  location?: string;
+  documentation: TicketDocumentation;
+  troubleshootingSteps: string[];
+  escalation: TicketEscalation;
+  activityLog: TicketActivityLogEntry[];
+  instructor: TicketInstructorReview;
   createdOn: Date;
   updatedAt: Date;
+}
+
+function buildDefaultDocumentation(description = ''): TicketDocumentation {
+  return {
+    reportedProblem: description,
+    initialObservations: '',
+    questionsAsked: '',
+    rootCause: '',
+    solutionApplied: '',
+    verification: '',
+    finalNotes: '',
+  };
+}
+
+function buildDefaultEscalation(): TicketEscalation {
+  return {
+    enabled: false,
+    reason: '',
+  };
+}
+
+function buildDefaultInstructor(): TicketInstructorReview {
+  return {
+    reviewed: false,
+    completedSuccessfully: false,
+    notes: '',
+  };
+}
+
+function normalizeTicketDocument(ticket: Partial<TicketDocument> & { description: string }) {
+  return {
+    ...ticket,
+    workflowStatus: ticket.workflowStatus || 'New',
+    deviceId: ticket.deviceId || '',
+    location: ticket.location || '',
+    documentation: {
+      ...buildDefaultDocumentation(ticket.description),
+      ...(ticket.documentation || {}),
+    },
+    troubleshootingSteps: ticket.troubleshootingSteps || [],
+    escalation: {
+      ...buildDefaultEscalation(),
+      ...(ticket.escalation || {}),
+    },
+    activityLog: ticket.activityLog || [],
+    instructor: {
+      ...buildDefaultInstructor(),
+      ...(ticket.instructor || {}),
+    },
+  };
 }
 
 // GET /api/tickets/[id] - Retrieve a specific ticket
@@ -51,7 +119,7 @@ export async function GET(
 
     // Transform _id to id for frontend compatibility
     const transformedTicket = {
-      ...ticket,
+      ...normalizeTicketDocument(ticket),
       id: ticket._id?.toString(),
       _id: undefined
     };
@@ -98,6 +166,33 @@ export async function PUT(
     delete updates.id;
     delete updates._id;
 
+    if (typeof updates.description === 'string' && !updates.documentation) {
+      updates.documentation = {
+        ...buildDefaultDocumentation(updates.description),
+      };
+    }
+
+    if (updates.documentation) {
+      updates.documentation = {
+        ...buildDefaultDocumentation(),
+        ...updates.documentation,
+      };
+    }
+
+    if (updates.escalation) {
+      updates.escalation = {
+        ...buildDefaultEscalation(),
+        ...updates.escalation,
+      };
+    }
+
+    if (updates.instructor) {
+      updates.instructor = {
+        ...buildDefaultInstructor(),
+        ...updates.instructor,
+      };
+    }
+
     // Add updatedAt timestamp
     updates.updatedAt = new Date();
 
@@ -118,7 +213,7 @@ export async function PUT(
 
     // Transform for frontend compatibility
     const transformedTicket = {
-      ...result,
+      ...normalizeTicketDocument(result),
       id: result._id?.toString(),
       _id: undefined
     };

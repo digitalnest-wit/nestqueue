@@ -4,8 +4,14 @@ import Image from "next/image";
 
 export default function LoginPage() {
   return (
-    <main className="dnest-bg" style={{ display: "grid", placeItems: "center", height: "90vh" }}>
-      <div className="w-full max-w-md bg-white rounded-md p-5 text-black shadow-xl/30 flex flex-col justify-between items-center">
+    <main
+      className="grid min-h-screen place-items-center px-4"
+      style={{
+        background:
+          "radial-gradient(circle at top, rgba(22,163,74,0.12), transparent 30%), linear-gradient(180deg, #f4fbf5 0%, #eef3f9 100%)",
+      }}
+    >
+      <div className="flex w-full max-w-md flex-col items-center justify-between rounded-[24px] border border-white/70 bg-white p-5 text-black shadow-xl/30 backdrop-blur">
         <Image
           src="/DN_vertical.png"
           alt="Digital Nest Logo"
@@ -30,4 +36,3 @@ export default function LoginPage() {
     </main>
   );
 }
-

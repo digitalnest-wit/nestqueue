@@ -1,6 +1,5 @@
 import { auth, provider } from "@/firebase";
 import { signInWithPopup } from "firebase/auth";
-import Link from "next/link";
 
 export default function LoginButton() {
   const handleLogin = async () => {
@@ -8,7 +7,7 @@ export default function LoginButton() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       console.log("✅ :", user.displayName);
-      window.location.href = "/tickets"; // fill in the right info
+      window.location.href = "/dashboard";
     } catch (error: any) {
       console.error("❌ :", error.message);
       alert("Login failed. Try again.");

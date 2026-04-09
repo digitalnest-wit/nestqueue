@@ -12,18 +12,29 @@ interface UseTicketsProps {
   order?: OrderKey;
 }
 
+interface UseTicketProps {
+  enabled?: boolean;
+}
+
 export const useTickets = ({ query, filter = "Last Modified", order = "Descending" }: UseTicketsProps) =>
   useQuery({
     queryKey: ["tickets", query, filter, order],
     retry: 0,
     queryFn: () => getTickets(query),
     select: (data) => sortTickets(data, ticketKeys[filter], order),
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
   });
 
-export const useTicket = (id: string) =>
+export const useTicket = (id: string, { enabled = true }: UseTicketProps = {}) =>
   useQuery({
     queryKey: ["tickets", id],
     queryFn: () => getTicket(id),
+    enabled,
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
   });
 
 export const useCreateTicket = () => {
@@ -46,10 +57,50 @@ export const useUpdateTicket = () => {
 
 export const useDeleteTicket = () => {
   const client = useQueryClient();
+  type DeleteMutationContext = {
+    previousEntries: [readonly unknown[], Ticket[] | undefined][];
+  };
 
-  return useMutation<void, Error, string>({
+  return useMutation<void, Error, string, DeleteMutationContext>({
     mutationFn: (id) => deleteTicket(id),
-    onSuccess: () => client.invalidateQueries({ queryKey: ["tickets"] }),
+    onMutate: async (id) => {
+      await client.cancelQueries({
+        predicate: (query) => query.queryKey[0] === "tickets",
+      });
+
+      const previousEntries = client.getQueriesData<Ticket[]>({
+        predicate: (query) =>
+          query.queryKey[0] === "tickets" &&
+          Array.isArray(query.state.data),
+      });
+
+      previousEntries.forEach(([queryKey, data]) => {
+        if (!data) {
+          return;
+        }
+
+        client.setQueryData<Ticket[]>(
+          queryKey,
+          data.filter((ticket) => ticket.id !== id),
+        );
+      });
+
+      client.removeQueries({ queryKey: ["tickets", id], exact: true });
+
+      return { previousEntries };
+    },
+    onError: (_error, _id, context) => {
+      context?.previousEntries?.forEach(([queryKey, data]) => {
+        client.setQueryData(queryKey, data);
+      });
+    },
+    onSuccess: (_data, id) => {
+      client.removeQueries({ queryKey: ["tickets", id], exact: true });
+      client.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === "tickets" && query.queryKey.length > 2,
+      });
+    },
   });
 };
 

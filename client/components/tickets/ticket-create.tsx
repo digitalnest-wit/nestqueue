@@ -1,31 +1,23 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import {
-  Building,
-  ChevronsUp,
-  LetterTextIcon,
-  Tag,
-  Text,
-  User,
-} from "lucide-react";
+import { FormEvent, useState } from "react";
+import { ArrowLeft, BadgeHelp } from "lucide-react";
+import { useAuth } from "@/lib/hooks/use-auth";
 
 import { useCreateTicket } from "@/lib/hooks/queries/use-tickets";
 import { useToast } from "@/lib/hooks/use-toast";
 import Ticket, {
   Categories,
   Priority,
-  Sites,
-  Priorities,
+  TicketLocations,
 } from "@/lib/types/ticket";
 import { CreateTicketRequest } from "@/lib/types/api";
 import Button from "../ui/button";
-import FormTextInput from "../ui/form-input";
-import FormSelectInput from "../ui/form-select";
-import ticketAssignedTo from "./ticket-assigned-to";
 
 export interface TicketCreateProps {
   onDismiss: (ticket?: Ticket) => void;
+  onCreated?: (ticket: Ticket) => void;
+  mode?: "page" | "modal";
 }
 
 type FormInputElement =
@@ -33,18 +25,32 @@ type FormInputElement =
   | HTMLTextAreaElement
   | HTMLSelectElement;
 
-export default function TicketCreate({ onDismiss }: TicketCreateProps) {
+const priorityOptions = [
+  { label: "Low", value: 1 },
+  { label: "Medium", value: 3 },
+  { label: "High", value: 5 },
+] as const;
+
+export default function TicketCreate({
+  onDismiss,
+  onCreated,
+  mode = "modal",
+}: TicketCreateProps) {
   const { addToast } = useToast();
   const { mutate: createTicket } = useCreateTicket();
+  const { user } = useAuth();
   const [formData, setFormData] = useState<CreateTicketRequest>({
     title: "",
     description: "",
     assignedTo: "",
     priority: 5,
-    createdBy: "techsquad@digitalnest.org",
+    createdBy: user?.displayName || user?.email || "techsquad@digitalnest.org",
     site: "Watsonville",
     category: "Hardware",
   });
+  const [userName, setUserName] = useState(user?.displayName || "");
+  const [deviceId, setDeviceId] = useState("");
+  const [deviceLocation, setDeviceLocation] = useState("Watsonville");
 
   const [saving, setSaving] = useState(false);
 
@@ -73,10 +79,57 @@ export default function TicketCreate({ onDismiss }: TicketCreateProps) {
     e.preventDefault();
     setSaving(true);
 
+    const normalizedUser = userName.trim();
+    const normalizedDevice = deviceId.trim();
+    const normalizedLocation = deviceLocation.trim();
+
+    const titleBase = normalizedDevice || normalizedLocation || formData.category;
+    const request: CreateTicketRequest = {
+      ...formData,
+      title: `${formData.category} Issue - ${titleBase}`,
+      description: formData.description.trim(),
+      createdBy:
+        normalizedUser || user?.displayName || user?.email || formData.createdBy,
+      site: (normalizedLocation || "Watsonville") as CreateTicketRequest["site"],
+      workflowStatus: "New",
+      deviceId: normalizedDevice,
+      location: normalizedLocation || "Watsonville",
+      documentation: {
+        reportedProblem: formData.description.trim(),
+        initialObservations: "",
+        questionsAsked: "",
+        rootCause: "",
+        solutionApplied: "",
+        verification: "",
+        finalNotes: "",
+      },
+      troubleshootingSteps: [],
+      escalation: {
+        enabled: false,
+        reason: "",
+      },
+      activityLog: [
+        {
+          id:
+            typeof crypto !== "undefined" && "randomUUID" in crypto
+              ? crypto.randomUUID()
+              : `${Date.now()}`,
+          label: "Ticket created",
+          timestamp: new Date().toLocaleString(),
+        },
+      ],
+      instructor: {
+        reviewed: false,
+        completedSuccessfully: false,
+        notes: "",
+      },
+    };
+
     try {
-      createTicket(formData, {
+      createTicket(request, {
         onSuccess: (ticket) => {
           addToast("New ticket created successfully!", "Success", 3500);
+          onCreated?.(ticket);
           onDismiss(ticket);
         },
         onError: (err) => {
@@ -97,77 +150,174 @@ export default function TicketCreate({ onDismiss }: TicketCreateProps) {
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 p-3 text-sm">
-      <h2 className="text-lg font-bold mb-2">Create Ticket</h2>
-      <form onSubmit={handleFormSubmit}>
-        <FormTextInput
-          className="mb-2"
-          icon={<LetterTextIcon width={16} />}
-          label="Title"
-          value={formData.title}
-          onChange={handleFormChanged}
-          placeholder="Enter a title"
-          required
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
-          <FormSelectInput
-            className="mb-2"
-            icon={<ChevronsUp width={16} />}
-            label="Priority"
-            value={formData.priority}
-            options={Priorities}
-            onChange={handleFormChanged}
-          />
+    <section
+      className={
+        mode === "page"
+          ? "mx-auto max-w-[760px] px-3 pb-6 pt-1"
+          : "w-full max-w-[760px] rounded-[28px] border border-[#dfe4ef] bg-white p-6 shadow-[0_30px_80px_rgba(15,23,42,0.18)] dark:border-[#1e293b] dark:bg-[#111827]"
+      }
+    >
+      <div className="mb-6 flex items-start gap-4">
+        <button
+          type="button"
+          onClick={handleFormDismiss}
+          className="mt-1 inline-flex h-9 w-9 items-center justify-center rounded-full text-[#334155] transition hover:bg-[#f1f5f9]"
+          aria-label="Go back"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+
+        <div>
+          <h1 className="text-[31px] font-bold tracking-[-0.03em] text-[#202634] dark:text-[#f8fafc]">
+            Create New Ticket
+          </h1>
+          <p className="mt-1 text-[16px] text-[#7c889d] dark:text-[#94a3b8]">
+            Fill in the details to create a support ticket
+          </p>
         </div>
-        <FormTextInput
-          className="mb-2"
-          icon={<Text width={16} />}
-          label="Description"
-          value={formData.description}
-          rows={4}
-          onChange={handleFormChanged}
-          placeholder="A descriptive ticket makes a good ticket."
-          required
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
-          <FormTextInput
-            icon={<User width={16} />}
-            label="Assigned To"
-            value={formData.assignedTo}
-            onChange={handleFormChanged}
-            placeholder="Unassigned"
-          />
-          <FormSelectInput
-            icon={<Building width={16} />}
-            label="Site"
-            value={formData.site}
-            options={Sites}
-            onChange={handleFormChanged}
-          />
-          <FormSelectInput
-            icon={<Tag width={16} />}
-            label="Category"
-            value={formData.category}
-            options={Categories}
-            onChange={handleFormChanged}
-          />
+      </div>
+
+      <div className="rounded-[24px] border border-[#dfe4ef] bg-white shadow-[0_18px_40px_rgba(15,23,42,0.05)] dark:border-[#1e293b] dark:bg-[#111827]">
+        <div className="flex items-center gap-3 border-b border-[#edf1f7] px-6 py-5 dark:border-[#1e293b]">
+          <BadgeHelp className="h-5 w-5 text-[#334155] dark:text-[#cbd5e1]" />
+          <h2 className="text-[17px] font-bold text-[#202634] dark:text-[#f8fafc]">
+            Ticket Information
+          </h2>
         </div>
-        <div className="mt-6 flex justify-end gap-3">
-          <Button
-            className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-100 rounded"
-            onClick={handleFormDismiss}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            className="border border-green-600 dark:border-green-700 bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-800 dark:hover:border-green-800 text-white rounded"
-            disabled={saving}
-          >
-            {saving ? "Creating..." : "Create"}
-          </Button>
-        </div>
-      </form>
-    </div>
+
+        <form onSubmit={handleFormSubmit} className="space-y-6 px-6 py-6">
+          <div className="grid gap-5 md:grid-cols-2">
+            <Field label="User Name" required>
+              <input
+                className={inputClassName}
+                name="userName"
+                value={userName}
+                onChange={(event) => setUserName(event.target.value)}
+                placeholder="e.g. John Smith"
+                required
+              />
+            </Field>
+
+            <Field label="Device ID">
+              <input
+                className={inputClassName}
+                name="deviceId"
+                value={deviceId}
+                onChange={(event) => setDeviceId(event.target.value)}
+                placeholder="e.g. PC-LAB1-05"
+              />
+            </Field>
+          </div>
+
+          <Field label="Device / Location">
+            <select
+              className={inputClassName}
+              name="deviceLocation"
+              value={deviceLocation}
+              onChange={(event) => setDeviceLocation(event.target.value)}
+            >
+              {TicketLocations.map((location) => (
+                <option key={location} value={location}>
+                  {location}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <Field label="Priority Level">
+              <select
+                className={inputClassName}
+                name="priority"
+                value={formData.priority}
+                onChange={handleFormChanged}
+              >
+                {priorityOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
+            <Field label="Category" required>
+              <select
+                className={inputClassName}
+                name="category"
+                value={formData.category}
+                onChange={handleFormChanged}
+                required
+              >
+                {Categories.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
+
+          <Field label="Assign Technician (optional)">
+            <input
+              className={inputClassName}
+              name="assignedTo"
+              value={formData.assignedTo || ""}
+              onChange={handleFormChanged}
+              placeholder="e.g. Student name"
+            />
+          </Field>
+
+          <Field label="Reported Problem" required>
+            <textarea
+              className={`${inputClassName} min-h-[124px] resize-none py-4`}
+              name="description"
+              value={formData.description}
+              onChange={handleFormChanged}
+              placeholder="Describe the problem as reported by the user..."
+              required
+            />
+          </Field>
+
+          <div className="flex justify-end gap-3 border-t border-[#edf1f7] pt-6">
+            <Button
+              className="rounded-xl border border-[#e2e8f0] bg-white px-5 py-3 text-[15px] font-semibold text-[#334155] transition hover:bg-[#f8fafc] dark:border-[#334155] dark:bg-[#0f172a] dark:text-[#e2e8f0] dark:hover:bg-[#1e293b]"
+              onClick={handleFormDismiss}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="rounded-xl bg-[#16a34a] px-5 py-3 text-[15px] font-semibold text-white transition hover:bg-[#15803d]"
+              disabled={saving}
+            >
+              {saving ? "Creating..." : "Create Ticket"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </section>
   );
 }
+
+function Field({
+  label,
+  required,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-[15px] font-semibold text-[#2f3747] dark:text-[#e2e8f0]">
+        {label}
+        {required && <span className="ml-1 text-[#ef4444]">*</span>}
+      </span>
+      {children}
+    </label>
+  );
+}
+
+const inputClassName =
+  "w-full rounded-xl border border-[#dbe2ee] bg-white px-4 py-3 text-[15px] text-[#1f2937] outline-none transition placeholder:text-[#94a3b8] focus:border-[#16a34a] focus:ring-4 focus:ring-[#dcfce7] dark:border-[#334155] dark:bg-[#0f172a] dark:text-[#f8fafc] dark:placeholder:text-[#64748b]";

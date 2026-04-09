@@ -9,10 +9,10 @@ import {
   Tag,
   User,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { MouseEvent, useEffect, useState } from "react";
 
 import TicketAssignedTo from "./ticket-assigned-to";
-import TicketEdit from "./ticket-edit";
 import { useTicket, useUpdateTicket } from "@/lib/hooks/queries/use-tickets";
 import { Status } from "@/lib/types/ticket";
 import Button from "../ui/button";
@@ -32,8 +32,8 @@ export default function TicketDetail({
 }: TicketDetailProps) {
   const { data: ticket } = useTicket(ticketId);
   const { mutate: updateTicket } = useUpdateTicket();
+  const router = useRouter();
   const [status, setStatus] = useState<Status>("Active");
-  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     if (ticket) {
@@ -58,21 +58,6 @@ export default function TicketDetail({
     }, 1 * 1000);
 
     return layout;
-  }
-
-  // If in editing mode, render the TicketEdit component
-  if (isEditing) {
-    return (
-      <TicketEdit
-        ticketId={ticketId}
-        onCancel={() => setIsEditing(false)}
-        onSave={(updates) => {
-          setIsEditing(false);
-          updateTicket({ id: ticketId, updates });
-          setTimeout(onUpdate, 300);
-        }}
-      />
-    );
   }
 
   const ticketCreatedAt = new Date(ticket.createdOn).toDateString();
@@ -128,7 +113,7 @@ export default function TicketDetail({
         </Button>
         <Button
           className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-white rounded"
-          onClick={() => setIsEditing(true)}
+          onClick={() => router.push(`/tickets/${ticketId}/edit`)}
         >
           <LabeledIcon icon={<PencilLine className="w-4" />} label="Edit" />
         </Button>

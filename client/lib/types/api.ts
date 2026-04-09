@@ -1,5 +1,15 @@
 // API Response types for the ticketing system
-import { Site, Category, Priority, Status } from "@/lib/types/ticket";
+import {
+  Category,
+  Priority,
+  Site,
+  Status,
+  TicketActivityLogEntry,
+  TicketDocumentation,
+  TicketEscalation,
+  TicketInstructorReview,
+  WorkflowStatus,
+} from "@/lib/types/ticket";
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -18,11 +28,19 @@ export interface TicketResponse {
   title: string;
   description: string;
   status: Status;
+  workflowStatus?: WorkflowStatus;
   site: Site;
   category: Category;
   assignedTo?: string;
   createdBy: string;
   priority: Priority;
+  deviceId?: string;
+  location?: string;
+  documentation?: TicketDocumentation;
+  troubleshootingSteps?: string[];
+  escalation?: TicketEscalation;
+  activityLog?: TicketActivityLogEntry[];
+  instructor?: TicketInstructorReview;
   createdOn: Date;
   updatedAt: Date;
 }
@@ -35,6 +53,14 @@ export interface CreateTicketRequest {
   assignedTo?: string;
   createdBy: string;
   priority: Priority;
+  workflowStatus?: WorkflowStatus;
+  deviceId?: string;
+  location?: string;
+  documentation?: TicketDocumentation;
+  troubleshootingSteps?: string[];
+  escalation?: TicketEscalation;
+  activityLog?: TicketActivityLogEntry[];
+  instructor?: TicketInstructorReview;
 }
 
 export interface CreateTicketResponse extends ApiResponse {
