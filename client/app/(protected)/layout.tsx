@@ -1,5 +1,6 @@
 "use client";
 
+import AppShell from "@/components/ui/app-shell";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -19,5 +20,5 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     return null;
   }
 
-  return <>{children}</>;
+  return <AppShell>{children}</AppShell>;
 }

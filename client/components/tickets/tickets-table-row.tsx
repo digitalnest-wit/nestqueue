@@ -10,7 +10,7 @@ export interface TicketsTableRowProps {
 
 export default function TicketTableRow({ ticket, onClick }: TicketsTableRowProps) {
   const ticketUpdatedAt = new Date(ticket.updatedAt).toDateString();
-  const columnStyles = "px-4 py-4 text-left text-gray-700 dark:text-gray-300";
+  const columnStyles = "px-4 py-4 text-left text-[#1f2937] dark:text-gray-200";
 
   let statusStyle: string;
 
@@ -30,7 +30,7 @@ export default function TicketTableRow({ ticket, onClick }: TicketsTableRowProps
   }
 
   return (
-    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700" key={ticket.id} onClick={() => onClick(ticket)}>
+    <tr className="hover:bg-[#f8fafc] dark:hover:bg-gray-700" key={ticket.id} onClick={() => onClick(ticket)}>
       <td className={`${columnStyles} font-bold min-w-[5rem]`}>P{ticket.priority}</td>
       <td className={`${columnStyles} font-normal min-w-[5rem] hidden md:block`}>{ticket.category}</td>
       <td className={`${columnStyles} font-normal min-w-[5rem] truncate whitespace-nowrap overflow-hidden`}>{ticket.title}</td>

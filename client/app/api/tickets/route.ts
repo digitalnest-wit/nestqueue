@@ -1,7 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
-import { Site, Category, Priority, Status, Sites, Categories, Priorities, Statuses } from '@/lib/types/ticket';
+import {
+  Category,
+  Priority,
+  Site,
+  Status,
+  Sites,
+  Categories,
+  Priorities,
+  TicketActivityLogEntry,
+  TicketDocumentation,
+  TicketEscalation,
+  TicketInstructorReview,
+  WorkflowStatus,
+} from '@/lib/types/ticket';
 
 // Define the ticket interface for type safety
 interface TicketDocument {
@@ -9,13 +22,71 @@ interface TicketDocument {
   title: string;
   description: string;
   status: Status;
+  workflowStatus: WorkflowStatus;
   site: Site;
   category: Category;
   assignedTo?: string;
   createdBy: string;
   priority: Priority;
+  deviceId?: string;
+  location?: string;
+  documentation: TicketDocumentation;
+  troubleshootingSteps: string[];
+  escalation: TicketEscalation;
+  activityLog: TicketActivityLogEntry[];
+  instructor: TicketInstructorReview;
   createdOn: Date;
   updatedAt: Date;
+}
+
+function buildDefaultDocumentation(description = ''): TicketDocumentation {
+  return {
+    reportedProblem: description,
+    initialObservations: '',
+    questionsAsked: '',
+    rootCause: '',
+    solutionApplied: '',
+    verification: '',
+    finalNotes: '',
+  };
+}
+
+function buildDefaultEscalation(): TicketEscalation {
+  return {
+    enabled: false,
+    reason: '',
+  };
+}
+
+function buildDefaultInstructor(): TicketInstructorReview {
+  return {
+    reviewed: false,
+    completedSuccessfully: false,
+    notes: '',
+  };
+}
+
+function normalizeTicketDocument(ticket: Partial<TicketDocument> & { createdOn: Date; updatedAt: Date }) {
+  return {
+    ...ticket,
+    workflowStatus: ticket.workflowStatus || 'New',
+    deviceId: ticket.deviceId || '',
+    location: ticket.location || '',
+    documentation: {
+      ...buildDefaultDocumentation(ticket.description || ''),
+      ...(ticket.documentation || {}),
+    },
+    troubleshootingSteps: ticket.troubleshootingSteps || [],
+    escalation: {
+      ...buildDefaultEscalation(),
+      ...(ticket.escalation || {}),
+    },
+    activityLog: ticket.activityLog || [],
+    instructor: {
+      ...buildDefaultInstructor(),
+      ...(ticket.instructor || {}),
+    },
+  };
 }
 
 // GET /api/tickets - Retrieve all tickets
@@ -48,7 +119,7 @@ export async function GET(request: NextRequest) {
 
     // Transform _id to id for frontend compatibility
     const transformedTickets = tickets.map(ticket => ({
-      ...ticket,
+      ...normalizeTicketDocument(ticket),
       id: ticket._id?.toString(),
       _id: undefined
     }));
@@ -77,7 +148,23 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { title, description, site, category, assignedTo, createdBy, priority } = body;
+    const {
+      title,
+      description,
+      site,
+      category,
+      assignedTo,
+      createdBy,
+      priority,
+      workflowStatus,
+      deviceId,
+      location,
+      documentation,
+      troubleshootingSteps,
+      escalation,
+      activityLog,
+      instructor,
+    } = body;
 
     // Validate required fields
     if (!title || !description || !site || !category || !createdBy || priority === undefined) {
@@ -118,11 +205,28 @@ export async function POST(request: NextRequest) {
       title: title.trim(),
       description: description.trim(),
       status: 'Open', // Default status (using proper enum value)
+      workflowStatus: workflowStatus || 'New',
       site: site as Site,
       category: category as Category,
       assignedTo: assignedTo || undefined,
       createdBy: createdBy.trim(),
       priority: priority as Priority,
+      deviceId: deviceId?.trim() || '',
+      location: location?.trim() || '',
+      documentation: {
+        ...buildDefaultDocumentation(description.trim()),
+        ...(documentation || {}),
+      },
+      troubleshootingSteps: Array.isArray(troubleshootingSteps) ? troubleshootingSteps : [],
+      escalation: {
+        ...buildDefaultEscalation(),
+        ...(escalation || {}),
+      },
+      activityLog: Array.isArray(activityLog) ? activityLog : [],
+      instructor: {
+        ...buildDefaultInstructor(),
+        ...(instructor || {}),
+      },
       createdOn: new Date(),
       updatedAt: new Date()
     };
@@ -143,7 +247,7 @@ export async function POST(request: NextRequest) {
 
     // Transform for frontend compatibility
     const responseTicket = {
-      ...createdTicket,
+      ...normalizeTicketDocument(createdTicket),
       id: createdTicket._id?.toString(),
       _id: undefined
     };

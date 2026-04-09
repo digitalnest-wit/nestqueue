@@ -60,6 +60,14 @@ func (s *TicketStore) CreateTicket(ctx context.Context, ticket models.Ticket) (i
 			{Key: "createdBy", Value: ticket.CreatedBy},
 			{Key: "priority", Value: ticket.Priority},
 			{Key: "status", Value: ticket.Status},
+			{Key: "workflowStatus", Value: ticket.WorkflowStatus},
+			{Key: "deviceId", Value: ticket.DeviceID},
+			{Key: "location", Value: ticket.Location},
+			{Key: "documentation", Value: ticket.Documentation},
+			{Key: "troubleshootingSteps", Value: ticket.TroubleshootingSteps},
+			{Key: "escalation", Value: ticket.Escalation},
+			{Key: "activityLog", Value: ticket.ActivityLog},
+			{Key: "instructor", Value: ticket.Instructor},
 			{Key: "createdOn", Value: now},
 			{Key: "updatedAt", Value: now},
 		}
@@ -166,6 +174,38 @@ func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[s
 
 	if status, ok := updates["status"].(string); ok {
 		updatesDoc = append(updatesDoc, bson.E{Key: "status", Value: status})
+	}
+
+	if workflowStatus, ok := updates["workflowStatus"].(string); ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "workflowStatus", Value: workflowStatus})
+	}
+
+	if deviceID, ok := updates["deviceId"].(string); ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "deviceId", Value: deviceID})
+	}
+
+	if location, ok := updates["location"].(string); ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "location", Value: location})
+	}
+
+	if documentation, ok := updates["documentation"]; ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "documentation", Value: documentation})
+	}
+
+	if troubleshootingSteps, ok := updates["troubleshootingSteps"]; ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "troubleshootingSteps", Value: troubleshootingSteps})
+	}
+
+	if escalation, ok := updates["escalation"]; ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "escalation", Value: escalation})
+	}
+
+	if activityLog, ok := updates["activityLog"]; ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "activityLog", Value: activityLog})
+	}
+
+	if instructor, ok := updates["instructor"]; ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "instructor", Value: instructor})
 	}
 
 	if len(updates) > 0 {
