@@ -456,7 +456,7 @@ export default function TicketEdit({ ticketId }: TicketEditProps) {
               deleteTicket(currentTicket.id, {
                 onSuccess: () => {
                   addToast("Ticket deleted.", "Info", 2200);
-                  router.replace("/tickets");
+                  router.push("/tickets");
                 },
                 onError: () => {
                   setIsDeleting(false);
