@@ -149,7 +149,15 @@ export default function TicketEdit({ ticketId }: TicketEditProps) {
     return currentState.documentation.reportedProblem;
   }, [currentState]);
 
-  if ((!ticket || !editorState) && !isDeleting) {
+  if (isDeleting) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center text-[#64748b] dark:text-[#cbd5e1]">
+        Deleting ticket...
+      </div>
+    );
+  }
+
+  if (!ticket || !editorState) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center text-[#64748b] dark:text-[#cbd5e1]">
         Loading ticket...
@@ -448,7 +456,7 @@ export default function TicketEdit({ ticketId }: TicketEditProps) {
               deleteTicket(currentTicket.id, {
                 onSuccess: () => {
                   addToast("Ticket deleted.", "Info", 2200);
-                  router.push("/tickets");
+                  router.replace("/tickets");
                 },
                 onError: () => {
                   setIsDeleting(false);
@@ -654,7 +662,7 @@ export default function TicketEdit({ ticketId }: TicketEditProps) {
             <div className="mt-5 space-y-4">
               {currentState.troubleshootingSteps.map((step, index) => (
                 <div
-                  key={`${index}-${step}`}
+                  key={index}
                   className="rounded-2xl border border-[#e5ebf3] bg-[#fbfcfe] p-4 dark:border-[#334155] dark:bg-[#0f172a]"
                 >
                   <div className="mb-2 flex items-center justify-between gap-4">
