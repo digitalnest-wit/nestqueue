@@ -168,6 +168,10 @@ func (s *TicketStore) UpdateTicket(ctx context.Context, id string, updates map[s
 		updatesDoc = append(updatesDoc, bson.E{Key: "assignedTo", Value: assignedTo})
 	}
 
+	if createdBy, ok := updates["createdBy"].(string); ok {
+		updatesDoc = append(updatesDoc, bson.E{Key: "createdBy", Value: createdBy})
+	}
+
 	if priority, ok := updates["priority"].(float64); ok {
 		updatesDoc = append(updatesDoc, bson.E{Key: "priority", Value: int(priority)})
 	}

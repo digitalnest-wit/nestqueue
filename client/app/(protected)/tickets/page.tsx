@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -14,6 +15,7 @@ const selectClassName =
   "rounded-xl border border-[#dbe2ee] bg-white px-5 py-3.5 text-[14px] font-medium text-[#1f2937] outline-none transition focus:border-[#16a34a] dark:border-[#334155] dark:bg-[#0f172a] dark:text-[#f8fafc]";
 
 export default function TicketsPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams?.get("q") || "";
   const initialCategory = searchParams?.get("category") || "All Categories";
@@ -282,11 +284,12 @@ export default function TicketsPage() {
                   return (
                     <tr
                       key={ticket.id}
-                    className="border-b border-[#edf1f7] transition hover:bg-[#f8fafc] dark:border-[#1e293b] dark:hover:bg-[#0f172a]"
+                      className="cursor-pointer border-b border-[#edf1f7] transition hover:bg-[#f8fafc] dark:border-[#1e293b] dark:hover:bg-[#0f172a]"
+                      onClick={() => router.push(`/tickets/${ticket.id}`)}
                     >
                       <BodyCell className="font-semibold">
                         <Link
-                          href={`/tickets/${ticket.id}/edit`}
+                          href={`/tickets/${ticket.id}`}
                           className="text-[#2563eb] hover:underline"
                         >
                           TCK-{ticket.id}

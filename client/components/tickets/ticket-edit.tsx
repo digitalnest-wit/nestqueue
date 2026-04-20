@@ -24,12 +24,15 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 import {
+  useTickets,
   useDeleteTicket,
   useTicket,
   useUpdateTicket,
 } from "@/lib/hooks/queries/use-tickets";
 import { useToast } from "@/lib/hooks/use-toast";
 import Ticket, {
+  Categories,
+  Category,
   Priority,
   Status,
   TicketActivityLogEntry,
@@ -56,6 +59,9 @@ type TicketPriorityLabel = "Low" | "Medium" | "High";
 type EditorState = {
   status: TicketWorkflowStatus;
   priority: TicketPriorityLabel;
+  createdBy: string;
+  assignedTo: string;
+  category: Category;
   deviceId: string;
   location: string;
   troubleshootingSteps: string[];
@@ -110,6 +116,9 @@ const emptyDocumentation: TicketDocumentation = {
 const emptyEditorState: EditorState = {
   status: "New",
   priority: "Low",
+  createdBy: "",
+  assignedTo: "",
+  category: "Hardware",
   deviceId: "",
   location: "",
   troubleshootingSteps: [],
@@ -127,6 +136,7 @@ export default function TicketEdit({ ticketId }: TicketEditProps) {
   const { addToast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const { data: ticket } = useTicket(ticketId, { enabled: !isDeleting });
+  const { data: allTickets } = useTickets({});
   const { mutate: updateTicket } = useUpdateTicket();
   const { mutate: deleteTicket } = useDeleteTicket();
   const [activeTab, setActiveTab] = useState<EditorTab>("Documentation");
@@ -148,6 +158,17 @@ export default function TicketEdit({ ticketId }: TicketEditProps) {
 
     return currentState.documentation.reportedProblem;
   }, [currentState]);
+
+  const userNameOptions = useMemo(() => {
+    const names = (allTickets || []).flatMap((item) => [
+      item.createdBy?.trim(),
+      item.assignedTo?.trim(),
+    ]);
+
+    return Array.from(
+      new Set(names.filter((value): value is string => Boolean(value))),
+    ).sort((a, b) => a.localeCompare(b));
+  }, [allTickets]);
 
   if (isDeleting) {
     return (
@@ -287,6 +308,11 @@ export default function TicketEdit({ ticketId }: TicketEditProps) {
     value: EditorState[K],
   ) => {
     switch (key) {
+      case "createdBy":
+      case "assignedTo":
+      case "category":
+        persistUpdates({ [key]: value } as Partial<Ticket>);
+        break;
       case "deviceId":
       case "location":
       case "troubleshootingSteps":
@@ -485,9 +511,22 @@ export default function TicketEdit({ ticketId }: TicketEditProps) {
       </div>
 
       <section className={`${cardClassName} grid gap-5 md:grid-cols-2 xl:grid-cols-4`}>
-        <InfoItem icon={<User className="h-4 w-4" />} label="Reported By">
-          {currentTicket.createdBy}
-        </InfoItem>
+        <div>
+          <p className="flex items-center gap-2 text-[14px] text-[#7c889d] dark:text-[#cbd5e1]">
+            <User className="h-4 w-4" />
+            Reported By
+          </p>
+          <input
+            className={`${inputClassName} mt-2`}
+            list="ticket-user-name-options"
+            value={currentState.createdBy}
+            onChange={(event) => updateState("createdBy", event.target.value)}
+            onBlur={(event) =>
+              saveScalarField("createdBy", event.target.value.trim())
+            }
+            placeholder="name@example.com"
+          />
+        </div>
         <div>
           <p className="flex items-center gap-2 text-[14px] text-[#7c889d] dark:text-[#cbd5e1]">
             <Laptop className="h-4 w-4" />
@@ -514,15 +553,47 @@ export default function TicketEdit({ ticketId }: TicketEditProps) {
             placeholder="Computer Lab 1, Station 15"
           />
         </div>
-        <InfoItem icon={<Tag className="h-4 w-4" />} label="Category">
-          {currentTicket.category}
-        </InfoItem>
+        <div>
+          <p className="flex items-center gap-2 text-[14px] text-[#7c889d] dark:text-[#cbd5e1]">
+            <Tag className="h-4 w-4" />
+            Category
+          </p>
+          <select
+            className="mt-2 w-full rounded-xl border border-[#dbe2ee] bg-white px-4 py-3 text-[15px] font-medium text-[#1f2937] outline-none focus:border-[#16a34a] dark:border-[#334155] dark:bg-[#0f172a] dark:text-[#f8fafc]"
+            value={currentState.category}
+            onChange={(event) =>
+              updateState("category", event.target.value as Category)
+            }
+            onBlur={(event) =>
+              saveScalarField("category", event.target.value as Category)
+            }
+          >
+            {Categories.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
         <InfoItem icon={<Clock3 className="h-4 w-4" />} label="Created">
           {formatDate(currentTicket.createdOn)}
         </InfoItem>
-        <InfoItem icon={<UserRoundCheck className="h-4 w-4" />} label="Assigned To">
-          {currentTicket.assignedTo || "Unassigned"}
-        </InfoItem>
+        <div>
+          <p className="flex items-center gap-2 text-[14px] text-[#7c889d] dark:text-[#cbd5e1]">
+            <UserRoundCheck className="h-4 w-4" />
+            Assigned To
+          </p>
+          <input
+            className={`${inputClassName} mt-2`}
+            list="ticket-user-name-options"
+            value={currentState.assignedTo}
+            onChange={(event) => updateState("assignedTo", event.target.value)}
+            onBlur={(event) =>
+              saveScalarField("assignedTo", event.target.value.trim())
+            }
+            placeholder="Technician name"
+          />
+        </div>
         <InfoItem icon={<Clock3 className="h-4 w-4" />} label="Updated">
           {formatDate(currentTicket.updatedAt)}
         </InfoItem>
@@ -544,6 +615,12 @@ export default function TicketEdit({ ticketId }: TicketEditProps) {
           </select>
         </div>
       </section>
+
+      <datalist id="ticket-user-name-options">
+        {userNameOptions.map((name) => (
+          <option key={name} value={name} />
+        ))}
+      </datalist>
 
       <div className="flex flex-wrap gap-1 rounded-2xl bg-[#f3f6fb] p-1 dark:bg-[#0f172a]">
         {tabs.map((tab) => {
@@ -999,6 +1076,9 @@ function buildEditorState(ticket: Ticket): EditorState {
   return {
     status: ticket.workflowStatus || mapTicketStatusToUi(ticket.status),
     priority: mapTicketPriorityToLabel(ticket.priority),
+    createdBy: ticket.createdBy || "",
+    assignedTo: ticket.assignedTo || "",
+    category: ticket.category,
     deviceId: ticket.deviceId || "",
     location: ticket.location || "",
     troubleshootingSteps: ticket.troubleshootingSteps || [],

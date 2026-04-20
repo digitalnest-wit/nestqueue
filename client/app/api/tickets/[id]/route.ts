@@ -162,9 +162,16 @@ export async function PUT(
     // Parse request body
     const updates = await request.json();
 
-    // Remove id and _id from updates if present
-    delete updates.id;
-    delete updates._id;
+    // Strip immutable identifier fields from updates.
+    const immutableFields = [
+      'id',
+      '_id',
+      'createdOn',
+    ];
+
+    immutableFields.forEach((field) => {
+      delete updates[field];
+    });
 
     if (typeof updates.description === 'string' && !updates.documentation) {
       updates.documentation = {

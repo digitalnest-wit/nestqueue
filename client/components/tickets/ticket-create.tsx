@@ -1,10 +1,10 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { ArrowLeft, BadgeHelp } from "lucide-react";
 import { useAuth } from "@/lib/hooks/use-auth";
 
-import { useCreateTicket } from "@/lib/hooks/queries/use-tickets";
+import { useCreateTicket, useTickets } from "@/lib/hooks/queries/use-tickets";
 import { useToast } from "@/lib/hooks/use-toast";
 import Ticket, {
   Categories,
@@ -38,6 +38,7 @@ export default function TicketCreate({
 }: TicketCreateProps) {
   const { addToast } = useToast();
   const { mutate: createTicket } = useCreateTicket();
+  const { data: tickets } = useTickets({});
   const { user } = useAuth();
   const [formData, setFormData] = useState<CreateTicketRequest>({
     title: "",
@@ -53,6 +54,16 @@ export default function TicketCreate({
   const [deviceLocation, setDeviceLocation] = useState("Watsonville");
 
   const [saving, setSaving] = useState(false);
+
+  const technicianOptions = useMemo(() => {
+    return Array.from(
+      new Set(
+        (tickets || [])
+          .map((ticket) => ticket.assignedTo?.trim())
+          .filter((value): value is string => Boolean(value)),
+      ),
+    ).sort((a, b) => a.localeCompare(b));
+  }, [tickets]);
 
   const handleFormDismiss = () => onDismiss();
 
@@ -261,10 +272,16 @@ export default function TicketCreate({
             <input
               className={inputClassName}
               name="assignedTo"
+              list="assigned-technician-options"
               value={formData.assignedTo || ""}
               onChange={handleFormChanged}
               placeholder="e.g. Student name"
             />
+            <datalist id="assigned-technician-options">
+              {technicianOptions.map((name) => (
+                <option key={name} value={name} />
+              ))}
+            </datalist>
           </Field>
 
           <Field label="Reported Problem" required>
